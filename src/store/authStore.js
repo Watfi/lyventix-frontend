@@ -43,8 +43,9 @@ const useAuthStore = create((set, get) => ({
       });
       return true;
     } catch (error) {
+      console.error('LOGIN ERROR:', error.message, error.code, error.response?.status, error.response?.data);
       set({
-        error: error.response?.data?.message || 'Error al iniciar sesión',
+        error: error.response?.data?.message || `Error al iniciar sesión (${error.message})`,
         loading: false,
       });
       return false;
