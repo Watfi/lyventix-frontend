@@ -1,24 +1,23 @@
 import api from './api';
 
-// ProductController: @RequestMapping("/api/products")
-// NOTE: baseURL is /api/v1, so we use absolute URL
+const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1').replace('/api/v1', '');
 const BASE = '/api/products';
 
 export const productService = {
   getProducts: (businessId, params = {}) =>
-    api.get(BASE, { baseURL: 'http://localhost:8080', params: { businessId, ...params } }),
+    api.get(BASE, { baseURL: BASE_URL, params: { businessId, ...params } }),
 
   getProduct: (id) =>
-    api.get(`${BASE}/${id}`, { baseURL: 'http://localhost:8080' }),
+    api.get(`${BASE}/${id}`, { baseURL: BASE_URL }),
 
   createProduct: (businessId, data) =>
-    api.post(BASE, data, { baseURL: 'http://localhost:8080', params: { businessId } }),
+    api.post(BASE, data, { baseURL: BASE_URL, params: { businessId } }),
 
   updateProduct: (id, data) =>
-    api.put(`${BASE}/${id}`, data, { baseURL: 'http://localhost:8080' }),
+    api.put(`${BASE}/${id}`, data, { baseURL: BASE_URL }),
 
   deleteProduct: (id) =>
-    api.delete(`${BASE}/${id}`, { baseURL: 'http://localhost:8080' }),
+    api.delete(`${BASE}/${id}`, { baseURL: BASE_URL }),
 };
 
 export default productService;

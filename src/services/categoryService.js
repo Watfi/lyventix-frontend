@@ -1,23 +1,23 @@
 import api from './api';
 
-// CategoryController: @RequestMapping("/api/categories")
+const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1').replace('/api/v1', '');
 const BASE = '/api/categories';
 
 export const categoryService = {
   getCategories: (businessId, params = {}) =>
-    api.get(BASE, { baseURL: 'http://localhost:8080', params: { businessId, ...params } }),
+    api.get(BASE, { baseURL: BASE_URL, params: { businessId, ...params } }),
 
   getCategory: (id) =>
-    api.get(`${BASE}/${id}`, { baseURL: 'http://localhost:8080' }),
+    api.get(`${BASE}/${id}`, { baseURL: BASE_URL }),
 
   createCategory: (businessId, data) =>
-    api.post(BASE, data, { baseURL: 'http://localhost:8080', params: { businessId } }),
+    api.post(BASE, data, { baseURL: BASE_URL, params: { businessId } }),
 
   updateCategory: (id, data) =>
-    api.put(`${BASE}/${id}`, data, { baseURL: 'http://localhost:8080' }),
+    api.put(`${BASE}/${id}`, data, { baseURL: BASE_URL }),
 
   deleteCategory: (id) =>
-    api.delete(`${BASE}/${id}`, { baseURL: 'http://localhost:8080' }),
+    api.delete(`${BASE}/${id}`, { baseURL: BASE_URL }),
 };
 
 export default categoryService;
