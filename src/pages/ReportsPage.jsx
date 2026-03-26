@@ -195,26 +195,24 @@ const ReportsPage = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Reportes y Estadisticas</h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm">Visualiza, filtra y exporta reportes de tu negocio</p>
-        </div>
+    <div className="space-y-3 sm:space-y-6">
+      <div>
+        <h2 className="text-lg sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Reportes</h2>
+        <p className="text-slate-500 dark:text-slate-400 text-[11px] sm:text-sm">Filtra y exporta reportes de tu negocio</p>
       </div>
 
       {/* Date Range Filter */}
-      <div className="glass-panel p-3 sm:p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 flex-wrap">
-        <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-          <Filter size={14} className="text-primary-500" />
-          <span className="text-xs sm:text-sm font-semibold">Rango:</span>
+      <div className="glass-panel p-2 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-3 flex-wrap">
+        <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+          <Filter size={12} className="text-primary-500" />
+          <span className="text-[11px] sm:text-sm font-semibold">Rango:</span>
         </div>
-        <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
-          <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm text-slate-800 dark:text-white flex-1 sm:flex-none min-w-0" />
-          <span className="text-slate-400 text-xs">a</span>
-          <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm text-slate-800 dark:text-white flex-1 sm:flex-none min-w-0" />
+        <div className="flex items-center gap-1.5 w-full sm:w-auto">
+          <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md px-1.5 py-0.5 sm:px-3 sm:py-1.5 text-[11px] sm:text-sm text-slate-800 dark:text-white flex-1 sm:flex-none min-w-0" />
+          <span className="text-slate-400 text-[10px]">a</span>
+          <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md px-1.5 py-0.5 sm:px-3 sm:py-1.5 text-[11px] sm:text-sm text-slate-800 dark:text-white flex-1 sm:flex-none min-w-0" />
         </div>
-        <div className="flex items-center gap-2 sm:ml-auto text-xs sm:text-sm text-slate-500">
+        <div className="flex items-center gap-1.5 sm:ml-auto text-[11px] sm:text-sm text-slate-500">
           <span className="font-medium">{filteredSales.length} ventas</span>
           <span>|</span>
           <span className="font-bold text-primary-500">{fmt(totalFiltered)}</span>
@@ -222,30 +220,30 @@ const ReportsPage = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 sm:gap-4">
         {[
-          { label: 'Ventas Periodo', value: fmt(totalFiltered), sub: `${filteredSales.length} ventas`, icon: BarChart3, color: 'text-primary-400', bg: 'bg-primary-500/10' },
-          { label: 'Ticket Promedio', value: fmt(avgTicket), sub: 'por venta', icon: TrendingUp, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-          { label: 'Productos', value: String(dashboard?.productsCount || 0), sub: 'en catalogo', icon: Package, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: 'Ventas', value: fmt(totalFiltered), sub: `${filteredSales.length}`, icon: BarChart3, color: 'text-primary-400', bg: 'bg-primary-500/10' },
+          { label: 'Ticket Prom.', value: fmt(avgTicket), sub: 'por venta', icon: TrendingUp, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+          { label: 'Productos', value: String(dashboard?.productsCount || 0), sub: 'catalogo', icon: Package, color: 'text-blue-400', bg: 'bg-blue-500/10' },
           { label: 'Stock Bajo', value: String(dashboard?.lowStockProductsCount || 0), sub: 'alertas', icon: AlertCircle, color: 'text-orange-400', bg: 'bg-orange-500/10' },
         ].map((card, i) => (
-          <motion.div key={i} whileHover={{ y: -2 }} className="glass-panel p-3 sm:p-4 rounded-xl sm:rounded-2xl">
-            <div className="flex items-center gap-1.5 mb-1 sm:mb-2">
-              <div className={`p-1 sm:p-1.5 rounded-lg ${card.bg}`}><card.icon size={14} className={card.color} /></div>
-              <span className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium truncate">{card.label}</span>
+          <div key={i} className="glass-panel p-2 sm:p-4 rounded-lg sm:rounded-2xl">
+            <div className="flex items-center gap-1 mb-0.5 sm:mb-2">
+              <div className={`p-0.5 sm:p-1.5 rounded ${card.bg}`}><card.icon size={12} className={card.color} /></div>
+              <span className="text-[9px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium truncate">{card.label}</span>
             </div>
-            <p className="text-base sm:text-xl font-bold text-slate-800 dark:text-white">{card.value}</p>
-            <p className="text-[10px] sm:text-xs text-emerald-500 font-semibold mt-0.5">{card.sub}</p>
-          </motion.div>
+            <p className="text-sm sm:text-xl font-bold text-slate-800 dark:text-white leading-tight">{card.value}</p>
+            <p className="text-[9px] sm:text-xs text-emerald-500 font-semibold">{card.sub}</p>
+          </div>
         ))}
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 overflow-x-auto pb-1">
+      <div className="flex gap-0.5 sm:gap-1 overflow-x-auto pb-0.5 -mx-1 px-1">
         {tabs.map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${activeTab === tab.id ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-500 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5'}`}>
-            <tab.icon size={15} />
+            className={`flex items-center gap-1 px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-medium whitespace-nowrap transition-all ${activeTab === tab.id ? 'bg-primary-500 text-white shadow-md shadow-primary-500/20' : 'text-slate-500 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5'}`}>
+            <tab.icon size={12} className="sm:w-4 sm:h-4" />
             {tab.label}
           </button>
         ))}
@@ -253,75 +251,74 @@ const ReportsPage = () => {
 
       {/* === VENTAS TAB === */}
       {activeTab === 'ventas' && (
-        <div className="space-y-4 sm:space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-            <div className="glass-panel p-3 sm:p-6 rounded-2xl sm:rounded-3xl">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 text-sm sm:text-base"><TrendingUp size={16} className="text-primary-500" /> Tendencia de Ventas</h3>
-                <button onClick={handleExportDailySales} className="text-[10px] sm:text-xs text-primary-500 hover:text-primary-400 flex items-center gap-1">{exporting.daily ? <CheckCircle2 size={12} /> : <Download size={12} />} PDF</button>
+        <div className="space-y-3 sm:space-y-6">
+          {/* 2x2 chart grid on mobile */}
+          <div className="grid grid-cols-2 lg:grid-cols-2 gap-2 sm:gap-6">
+            <div className="glass-panel p-2 sm:p-6 rounded-xl sm:rounded-3xl">
+              <div className="flex items-center justify-between mb-1.5 sm:mb-3">
+                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1 text-[11px] sm:text-base"><TrendingUp size={12} className="text-primary-500 sm:w-[18px] sm:h-[18px]" /> <span className="hidden sm:inline">Tendencia de</span> Ventas</h3>
+                <button onClick={handleExportDailySales} className="text-[9px] sm:text-xs text-primary-500 flex items-center gap-0.5"><Download size={10} /> <span className="hidden sm:inline">PDF</span></button>
               </div>
               {dailySalesData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={200}>
-                  <AreaChart data={dailySalesData} margin={{ left: -15, right: 5, top: 5, bottom: 0 }}>
+                <ResponsiveContainer width="100%" height={140} className="sm:!h-[280px]">
+                  <AreaChart data={dailySalesData} margin={{ left: -20, right: 2, top: 2, bottom: 0 }}>
                     <defs><linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} /><stop offset="95%" stopColor="#6366f1" stopOpacity={0} /></linearGradient></defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis dataKey="label" tick={{ fontSize: 9 }} stroke="#94a3b8" interval="preserveStartEnd" />
-                    <YAxis tick={{ fontSize: 9 }} stroke="#94a3b8" tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v} width={35} />
+                    <XAxis dataKey="label" tick={{ fontSize: 8 }} stroke="#94a3b8" interval="preserveStartEnd" />
+                    <YAxis tick={{ fontSize: 8 }} stroke="#94a3b8" tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v} width={28} />
                     <Tooltip content={<CustomTooltip />} />
-                    <Area type="monotone" dataKey="total" name="Total" stroke="#6366f1" fillOpacity={1} fill="url(#colorTotal)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="total" name="Total" stroke="#6366f1" fillOpacity={1} fill="url(#colorTotal)" strokeWidth={1.5} />
                   </AreaChart>
                 </ResponsiveContainer>
-              ) : <p className="text-slate-500 text-center py-10 text-sm">No hay datos en este rango</p>}
+              ) : <p className="text-slate-500 text-center py-6 text-[10px] sm:text-sm">Sin datos</p>}
             </div>
 
-            <div className="glass-panel p-3 sm:p-6 rounded-2xl sm:rounded-3xl">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 text-sm sm:text-base"><Wallet size={16} className="text-purple-500" /> Por Metodo de Pago</h3>
-                <button onClick={handleExportSales} className="text-[10px] sm:text-xs text-primary-500 hover:text-primary-400 flex items-center gap-1">{exporting.sales ? <CheckCircle2 size={12} /> : <Download size={12} />} PDF</button>
+            <div className="glass-panel p-2 sm:p-6 rounded-xl sm:rounded-3xl">
+              <div className="flex items-center justify-between mb-1.5 sm:mb-3">
+                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1 text-[11px] sm:text-base"><Wallet size={12} className="text-purple-500 sm:w-[18px] sm:h-[18px]" /> <span className="hidden sm:inline">Metodo de</span> Pago</h3>
+                <button onClick={handleExportSales} className="text-[9px] sm:text-xs text-primary-500 flex items-center gap-0.5"><Download size={10} /> <span className="hidden sm:inline">PDF</span></button>
               </div>
               {paymentMethodData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={200}>
+                <ResponsiveContainer width="100%" height={140} className="sm:!h-[280px]">
                   <PieChart>
-                    <Pie data={paymentMethodData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} innerRadius={35} paddingAngle={3}>
+                    <Pie data={paymentMethodData} dataKey="value" nameKey="name" cx="50%" cy="45%" outerRadius="60%" innerRadius="30%" paddingAngle={2}>
                       {paymentMethodData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />
-                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    <Legend wrapperStyle={{ fontSize: 9 }} iconSize={8} />
                   </PieChart>
                 </ResponsiveContainer>
-              ) : <p className="text-slate-500 text-center py-10 text-sm">No hay datos</p>}
+              ) : <p className="text-slate-500 text-center py-6 text-[10px] sm:text-sm">Sin datos</p>}
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-            <div className="glass-panel p-3 sm:p-6 rounded-2xl sm:rounded-3xl">
-              <h3 className="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-1.5 text-sm sm:text-base"><FileText size={16} className="text-emerald-500" /> Por Estado</h3>
+            <div className="glass-panel p-2 sm:p-6 rounded-xl sm:rounded-3xl">
+              <h3 className="font-bold text-slate-800 dark:text-white mb-1.5 sm:mb-3 flex items-center gap-1 text-[11px] sm:text-base"><FileText size={12} className="text-emerald-500 sm:w-[18px] sm:h-[18px]" /> Estado</h3>
               {statusData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={200}>
+                <ResponsiveContainer width="100%" height={140} className="sm:!h-[250px]">
                   <PieChart>
-                    <Pie data={statusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={65} innerRadius={30} paddingAngle={3}>
+                    <Pie data={statusData} dataKey="value" nameKey="name" cx="50%" cy="45%" outerRadius="55%" innerRadius="25%" paddingAngle={2}>
                       {statusData.map((_, i) => <Cell key={i} fill={['#10b981', '#ef4444', '#f59e0b'][i] || COLORS[i]} />)}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />
-                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    <Legend wrapperStyle={{ fontSize: 9 }} iconSize={8} />
                   </PieChart>
                 </ResponsiveContainer>
-              ) : <p className="text-slate-500 text-center py-10 text-sm">No hay datos</p>}
+              ) : <p className="text-slate-500 text-center py-6 text-[10px] sm:text-sm">Sin datos</p>}
             </div>
 
-            <div className="glass-panel p-3 sm:p-6 rounded-2xl sm:rounded-3xl">
-              <h3 className="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-1.5 text-sm sm:text-base"><Calendar size={16} className="text-blue-500" /> Ventas por Dia</h3>
+            <div className="glass-panel p-2 sm:p-6 rounded-xl sm:rounded-3xl">
+              <h3 className="font-bold text-slate-800 dark:text-white mb-1.5 sm:mb-3 flex items-center gap-1 text-[11px] sm:text-base"><Calendar size={12} className="text-blue-500 sm:w-[18px] sm:h-[18px]" /> <span className="hidden sm:inline">Ventas por</span> Dia</h3>
               {dailySalesData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={dailySalesData} margin={{ left: -15, right: 5, top: 5, bottom: 0 }}>
+                <ResponsiveContainer width="100%" height={140} className="sm:!h-[250px]">
+                  <BarChart data={dailySalesData} margin={{ left: -20, right: 2, top: 2, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis dataKey="label" tick={{ fontSize: 9 }} stroke="#94a3b8" interval="preserveStartEnd" />
-                    <YAxis tick={{ fontSize: 9 }} stroke="#94a3b8" width={30} />
+                    <XAxis dataKey="label" tick={{ fontSize: 8 }} stroke="#94a3b8" interval="preserveStartEnd" />
+                    <YAxis tick={{ fontSize: 8 }} stroke="#94a3b8" width={25} />
                     <Tooltip content={<CustomTooltip />} />
-                    <Bar dataKey="count" name="Ventas" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="count" name="Ventas" fill="#3b82f6" radius={[3, 3, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
-              ) : <p className="text-slate-500 text-center py-10 text-sm">No hay datos</p>}
+              ) : <p className="text-slate-500 text-center py-6 text-[10px] sm:text-sm">Sin datos</p>}
             </div>
           </div>
 
@@ -400,39 +397,39 @@ const ReportsPage = () => {
 
       {/* === PRODUCTOS TAB === */}
       {activeTab === 'productos' && (
-        <div className="space-y-4 sm:space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-            <div className="glass-panel p-3 sm:p-6 rounded-2xl sm:rounded-3xl">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-bold text-slate-800 dark:text-white text-sm sm:text-base">Top Productos</h3>
-                <button onClick={handleExportTopProducts} className="text-[10px] sm:text-xs text-primary-500 hover:text-primary-400 flex items-center gap-1">{exporting.top ? <CheckCircle2 size={12} /> : <Download size={12} />} PDF</button>
+        <div className="space-y-3 sm:space-y-6">
+          <div className="grid grid-cols-2 lg:grid-cols-2 gap-2 sm:gap-6">
+            <div className="glass-panel p-2 sm:p-6 rounded-xl sm:rounded-3xl">
+              <div className="flex items-center justify-between mb-1.5 sm:mb-3">
+                <h3 className="font-bold text-slate-800 dark:text-white text-[11px] sm:text-base">Top Productos</h3>
+                <button onClick={handleExportTopProducts} className="text-[9px] sm:text-xs text-primary-500 flex items-center gap-0.5"><Download size={10} /> <span className="hidden sm:inline">PDF</span></button>
               </div>
               {topProductsData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={220}>
-                  <BarChart data={topProductsData} layout="vertical" margin={{ left: 0, right: 5, top: 5, bottom: 0 }}>
+                <ResponsiveContainer width="100%" height={160} className="sm:!h-[300px]">
+                  <BarChart data={topProductsData} layout="vertical" margin={{ left: -5, right: 2, top: 2, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis type="number" tick={{ fontSize: 9 }} stroke="#94a3b8" />
-                    <YAxis dataKey="name" type="category" tick={{ fontSize: 9 }} stroke="#94a3b8" width={90} />
+                    <XAxis type="number" tick={{ fontSize: 8 }} stroke="#94a3b8" />
+                    <YAxis dataKey="name" type="category" tick={{ fontSize: 7 }} stroke="#94a3b8" width={65} />
                     <Tooltip content={<CustomTooltip />} />
-                    <Bar dataKey="cantidad" name="Cantidad" fill="#6366f1" radius={[0, 4, 4, 0]} />
+                    <Bar dataKey="cantidad" name="Cantidad" fill="#6366f1" radius={[0, 3, 3, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
-              ) : <p className="text-slate-500 text-center py-10 text-sm">No hay datos</p>}
+              ) : <p className="text-slate-500 text-center py-6 text-[10px]">No hay datos</p>}
             </div>
 
-            <div className="glass-panel p-3 sm:p-6 rounded-2xl sm:rounded-3xl">
-              <h3 className="font-bold text-slate-800 dark:text-white mb-3 text-sm sm:text-base">Ingresos por Producto</h3>
+            <div className="glass-panel p-2 sm:p-6 rounded-xl sm:rounded-3xl">
+              <h3 className="font-bold text-slate-800 dark:text-white mb-1.5 sm:mb-3 text-[11px] sm:text-base">Ingresos</h3>
               {topProductsData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={220}>
+                <ResponsiveContainer width="100%" height={160} className="sm:!h-[300px]">
                   <PieChart>
-                    <Pie data={topProductsData} dataKey="ingresos" nameKey="name" cx="50%" cy="50%" outerRadius={65} innerRadius={30} paddingAngle={2}>
+                    <Pie data={topProductsData} dataKey="ingresos" nameKey="name" cx="50%" cy="45%" outerRadius="55%" innerRadius="25%" paddingAngle={2}>
                       {topProductsData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />
-                    <Legend wrapperStyle={{ fontSize: 10 }} />
+                    <Legend wrapperStyle={{ fontSize: 9 }} iconSize={8} />
                   </PieChart>
                 </ResponsiveContainer>
-              ) : <p className="text-slate-500 text-center py-10 text-sm">No hay datos</p>}
+              ) : <p className="text-slate-500 text-center py-6 text-[10px]">No hay datos</p>}
             </div>
           </div>
 
