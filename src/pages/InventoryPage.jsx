@@ -206,30 +206,30 @@ const InventoryPage = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Inventario</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Inventario</h2>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Stock actual, entradas y salidas por sucursal</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2 sm:gap-3">
           <Button variant="outline" onClick={() => openMovementModal('entry')} disabled={!selectedBranch}>
-            <ArrowUpRight size={18} /><span>Entrada</span>
+            <ArrowUpRight size={18} /><span className="hidden sm:inline">Entrada</span>
           </Button>
           <Button variant="outline" onClick={() => openMovementModal('exit')} disabled={!selectedBranch}>
-            <ArrowDownRight size={18} /><span>Salida</span>
+            <ArrowDownRight size={18} /><span className="hidden sm:inline">Salida</span>
           </Button>
           <Button variant="outline" onClick={() => { setTransferItem(null); setTransferForm({ targetBranchId: '', quantity: '', notes: '' }); setShowTransferModal(true); }} disabled={!selectedBranch || branches.length < 2}>
-            <ArrowLeftRight size={18} /><span>Transferir</span>
+            <ArrowLeftRight size={18} /><span className="hidden sm:inline">Transferir</span>
           </Button>
         </div>
       </div>
 
       {/* Branch selector + search */}
-      <div className="glass-panel p-4 rounded-3xl flex flex-col md:flex-row items-center gap-4">
+      <div className="glass-panel p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex flex-col md:flex-row items-stretch md:items-center gap-3 sm:gap-4">
         <select value={selectedBranch} onChange={(e) => setSelectedBranch(e.target.value)}
-          className="bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-800 dark:text-white outline-none focus:border-primary-500 transition-colors min-w-[200px] [&>option]:bg-white [&>option]:text-white">
+          className="bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-white/10 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-slate-800 dark:text-white outline-none focus:border-primary-500 transition-colors w-full md:min-w-[200px] md:w-auto [&>option]:bg-white [&>option]:text-white">
           {branches.map(b => <option key={b.id} value={b.id} className="bg-white dark:bg-[#1e293b] text-slate-800 dark:text-white">{b.name}</option>)}
           {branches.length === 0 && <option value="" className="bg-white dark:bg-[#1e293b] text-slate-800 dark:text-white">No hay sucursales</option>}
         </select>
@@ -253,7 +253,7 @@ const InventoryPage = () => {
           {/* Mobile card view */}
           <div className="lg:hidden space-y-3">
             {filteredStock.map((item) => (
-              <div key={item.inventoryId || item.productId} className="glass-card p-4 rounded-2xl">
+              <div key={item.inventoryId || item.productId} className="glass-card p-3 sm:p-4 rounded-2xl">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 bg-primary-600/20 rounded-xl flex items-center justify-center text-primary-400 shrink-0"><Package size={18} /></div>
                   <div className="flex-1 min-w-0">
@@ -469,8 +469,8 @@ const InventoryPage = () => {
 
       {/* ═══════ Entry/Exit Modal ═══════ */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass-panel rounded-3xl p-8 w-full max-w-lg">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center sm:p-4">
+          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass-panel rounded-t-3xl sm:rounded-3xl p-5 sm:p-8 w-full sm:max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold text-slate-800 dark:text-white">{movementType === 'entry' ? '📥 Entrada de Inventario' : '📤 Salida de Inventario'}</h3>
               <button onClick={() => setShowModal(false)} className="text-slate-500 dark:text-slate-400 hover:text-white"><X size={20} /></button>
@@ -554,8 +554,8 @@ const InventoryPage = () => {
 
       {/* ═══════ Edit Stock Settings Modal ═══════ */}
       {showEditModal && editItem && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass-panel rounded-3xl p-8 w-full max-w-md">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center sm:p-4">
+          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass-panel rounded-t-3xl sm:rounded-3xl p-5 sm:p-8 w-full sm:max-w-md max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold text-slate-800 dark:text-white">⚙️ Configurar Stock</h3>
               <button onClick={() => setShowEditModal(false)} className="text-slate-500 dark:text-slate-400 hover:text-white"><X size={20} /></button>
@@ -590,8 +590,8 @@ const InventoryPage = () => {
 
       {/* ═══════ Transfer Stock Modal ═══════ */}
       {showTransferModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass-panel rounded-3xl p-8 w-full max-w-md">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center sm:p-4">
+          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass-panel rounded-t-3xl sm:rounded-3xl p-5 sm:p-8 w-full sm:max-w-md max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold text-slate-800 dark:text-white">🔄 Transferir Stock</h3>
               <button onClick={() => setShowTransferModal(false)} className="text-slate-500 dark:text-slate-400 hover:text-white"><X size={20} /></button>

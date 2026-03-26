@@ -80,53 +80,53 @@ const POSPage = () => {
   }, [customerSearch, showCustomerModal, businessId]);
 
   return (
-    <div className="flex gap-6 h-[calc(100vh-140px)]">
+    <div className="flex flex-col md:flex-row gap-4 md:gap-6 h-auto md:h-[calc(100vh-140px)]">
       {/* Product Selection Area */}
-      <div className="flex-[2] flex flex-col gap-6">
-        <div className="glass-panel p-4 rounded-3xl flex items-center gap-4">
+      <div className="flex-[2] flex flex-col gap-4 md:gap-6 min-h-[40vh] md:min-h-0">
+        <div className="glass-panel p-3 md:p-4 rounded-2xl md:rounded-3xl flex items-center gap-2 md:gap-4">
           <Input
             className="flex-1"
-            placeholder="Buscar productos por nombre, SKU o código de barras..."
+            placeholder="Buscar productos..."
             icon={Search}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <Button variant="secondary" className="px-4">
+          <Button variant="secondary" className="px-3 md:px-4">
             <PackageSearch size={20} />
           </Button>
         </div>
 
-        <div className="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pr-2">
+        <div className="flex-1 overflow-y-auto grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-6 pr-1 md:pr-2">
           {products.map((product) => (
             <motion.div
               layout
               key={product.id}
               whileHover={{ y: -4 }}
               onClick={() => addToCart(product)}
-              className="glass-card p-5 rounded-3xl cursor-pointer flex flex-col justify-between"
+              className="glass-card p-3 md:p-5 rounded-2xl md:rounded-3xl cursor-pointer flex flex-col justify-between"
             >
-                <h4 className="text-slate-800 dark:text-white font-bold leading-tight">{product.name}</h4>
-                <p className="text-slate-600 dark:text-slate-500 text-sm mt-1">SKU: {product.sku || '-'}</p>
-              <div className="flex items-center justify-between mt-6">
-                <span className="text-xl font-bold text-slate-800 dark:text-white">${Number(product.salePrice).toLocaleString()}</span>
-                <div className="p-2 bg-primary-600 rounded-xl text-white shadow-lg shadow-primary-900/10">
-                  <Plus size={18} />
+                <h4 className="text-slate-800 dark:text-white font-bold leading-tight text-sm md:text-base">{product.name}</h4>
+                <p className="text-slate-600 dark:text-slate-500 text-xs md:text-sm mt-1 truncate">SKU: {product.sku || '-'}</p>
+              <div className="flex items-center justify-between mt-3 md:mt-6">
+                <span className="text-base md:text-xl font-bold text-slate-800 dark:text-white">${Number(product.salePrice).toLocaleString()}</span>
+                <div className="p-1.5 md:p-2 bg-primary-600 rounded-lg md:rounded-xl text-white shadow-lg shadow-primary-900/10">
+                  <Plus size={16} />
                 </div>
               </div>
             </motion.div>
           ))}
           {products.length === 0 && !loading && (
-             <div className="col-span-full flex flex-col items-center justify-center opacity-40 py-20">
-                <Search size={64} />
-                <p className="mt-4 text-lg">Busca productos para comenzar</p>
+             <div className="col-span-full flex flex-col items-center justify-center opacity-40 py-10 md:py-20">
+                <Search size={48} className="md:w-16 md:h-16" />
+                <p className="mt-3 md:mt-4 text-sm md:text-lg">Busca productos para comenzar</p>
              </div>
           )}
         </div>
       </div>
 
       {/* Cart Area */}
-      <div className="flex-1 glass-panel rounded-3xl flex flex-col overflow-hidden">
-        <div className="p-6 border-b border-white/5 flex flex-col gap-3">
+      <div className="flex-1 glass-panel rounded-2xl md:rounded-3xl flex flex-col overflow-hidden min-h-[300px]">
+        <div className="p-4 md:p-6 border-b border-white/5 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <ShoppingCart className="text-primary-600 dark:text-primary-400" size={24} />
@@ -150,7 +150,7 @@ const POSPage = () => {
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        <div className="flex-1 overflow-y-auto p-3 md:p-6 space-y-3 md:space-y-4">
           <AnimatePresence initial={false}>
             {cart.map((item) => (
               <motion.div
@@ -158,7 +158,7 @@ const POSPage = () => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="flex items-center gap-4 group"
+                className="flex items-center gap-2 md:gap-4 group"
               >
                 <div className="flex-1 min-w-0">
                   <h5 className="text-slate-800 dark:text-white font-semibold truncate text-sm">{item.name}</h5>
@@ -181,13 +181,13 @@ const POSPage = () => {
                   </button>
                 </div>
 
-                <div className="text-right min-w-[80px]">
-                  <p className="text-slate-800 dark:text-white font-bold text-sm">${(Number(item.salePrice) * item.quantity).toLocaleString()}</p>
+                <div className="text-right min-w-[60px] md:min-w-[80px]">
+                  <p className="text-slate-800 dark:text-white font-bold text-xs md:text-sm">${(Number(item.salePrice) * item.quantity).toLocaleString()}</p>
                 </div>
 
                 <button
                   onClick={() => removeFromCart(item.id)}
-                  className="p-2 text-slate-600 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
+                  className="p-1.5 md:p-2 text-slate-600 hover:text-red-400 transition-colors md:opacity-0 md:group-hover:opacity-100"
                 >
                   <Trash2 size={16} />
                 </button>
@@ -197,7 +197,7 @@ const POSPage = () => {
         </div>
 
         {/* Totals & Checkout */}
-        <div className="p-6 bg-white/5 border-t border-white/10 space-y-4">
+        <div className="p-4 md:p-6 bg-white/5 border-t border-white/10 space-y-3 md:space-y-4">
           {selectedCustomer && !isRestaurant && (
             <div className="flex items-center justify-between bg-primary-50 dark:bg-primary-900/20 p-3 rounded-xl border border-primary-100 dark:border-primary-500/20">
               <div className="flex items-center gap-2">
@@ -214,19 +214,19 @@ const POSPage = () => {
           <div className="space-y-2">
             <div className="flex justify-between text-slate-500 dark:text-slate-400 text-sm"><span>Subtotal</span><span>${subtotal.toLocaleString()}</span></div>
             <div className="flex justify-between text-slate-500 dark:text-slate-400 text-sm"><span>Impuestos (19%)</span><span>${tax.toLocaleString()}</span></div>
-            <div className="flex justify-between text-slate-800 dark:text-white text-xl font-bold pt-2 border-t border-slate-200 dark:border-white/5"><span>Total</span><span>${total.toLocaleString()}</span></div>
+            <div className="flex justify-between text-slate-800 dark:text-white text-lg md:text-xl font-bold pt-2 border-t border-slate-200 dark:border-white/5"><span>Total</span><span>${total.toLocaleString()}</span></div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2 md:gap-3">
              {isRestaurant ? (
                 <>
-                  <Button className="py-4 flex-1 bg-amber-500 hover:bg-amber-600 border-amber-500 shadow-amber-900/10 text-white" onClick={async () => {
+                  <Button className="py-3 md:py-4 flex-1 bg-amber-500 hover:bg-amber-600 border-amber-500 shadow-amber-900/10 text-white" onClick={async () => {
                     const snap = [...cart]; const tots = { subtotal, tax, total };
                     const result = await processSale(businessId, { paymentMethod: 'CASH', status: 'PENDING' });
                     if (result?.success) setSaleConfirmation({ ...result.data, _status: 'PENDING', _cart: snap, _totals: tots });
                   }}>
                     <span className="font-bold uppercase tracking-wider text-xs">Comanda</span>
                   </Button>
-                  <Button className="py-4 flex-1" onClick={async () => {
+                  <Button className="py-3 md:py-4 flex-1" onClick={async () => {
                     const snap = [...cart]; const tots = { subtotal, tax, total };
                     const result = await processSale(businessId, { paymentMethod: 'CASH', status: 'COMPLETED' });
                     if (result?.success) setSaleConfirmation({ ...result.data, _status: 'COMPLETED', _cart: snap, _totals: tots });
@@ -236,14 +236,14 @@ const POSPage = () => {
                 </>
              ) : (
                 <>
-                  <Button variant="outline" className="py-4" onClick={() => setShowCustomerModal(true)}>
+                  <Button variant="outline" className="py-3 md:py-4" onClick={() => setShowCustomerModal(true)}>
                     {selectedCustomer ? (
                       <span className="text-xs font-bold truncate">{selectedCustomer.fullName || selectedCustomer.firstName}</span>
                     ) : (
                       <UserPlus size={18} />
                     )}
                   </Button>
-                  <Button className="py-4 flex-1" onClick={async () => {
+                  <Button className="py-3 md:py-4 flex-1" onClick={async () => {
                     const cartSnapshot = [...cart];
                     const totalsSnapshot = { subtotal, tax, total };
                     const result = await processSale(businessId, { paymentMethod: 'CASH', status: 'COMPLETED', customerId: selectedCustomer?.id || null });

@@ -220,40 +220,40 @@ const SettingsPage = () => {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in relative z-10 block w-full h-full">
-      <div className="flex justify-between items-center">
+    <div className="space-y-4 sm:space-y-6 animate-fade-in relative z-10 block w-full h-full overflow-x-hidden">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
-          <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Configuración del Negocio</h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Gestiona los detalles de la empresa y preferencias del sistema</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Configuración del Negocio</h2>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm sm:text-base">Gestiona los detalles de la empresa y preferencias del sistema</p>
         </div>
         {success && (
-          <div className="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 px-4 py-2 rounded-xl">
-            <CheckCircle2 size={18} />
-            <span className="font-medium text-sm">Cambios guardados</span>
+          <div className="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 px-3 sm:px-4 py-2 rounded-xl">
+            <CheckCircle2 size={18} className="shrink-0" />
+            <span className="font-medium text-xs sm:text-sm">Guardado</span>
           </div>
         )}
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-6">
         {/* Sidebar Tabs */}
-        <div className="w-64 flex flex-col gap-2">
+        <div className="w-full md:w-64 flex flex-row md:flex-col gap-2 overflow-x-auto pb-1 md:pb-0">
           <button 
             onClick={() => setActiveTab('general')}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'general' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}`}
+            className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl transition-all text-left whitespace-nowrap shrink-0 ${activeTab === 'general' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}`}
           >
             <Building2 size={20} />
             <span className="font-medium text-sm">General</span>
           </button>
           <button 
             onClick={() => setActiveTab('appearance')}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'appearance' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}`}
+            className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl transition-all text-left whitespace-nowrap shrink-0 ${activeTab === 'appearance' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}`}
           >
             <Palette size={20} />
             <span className="font-medium text-sm">Apariencia</span>
           </button>
           <button 
             onClick={() => setActiveTab('taxes')}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${activeTab === 'taxes' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}`}
+            className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl transition-all text-left whitespace-nowrap shrink-0 ${activeTab === 'taxes' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}`}
           >
             <DollarSign size={20} />
             <span className="font-medium text-sm">Impuestos y Moneda</span>
@@ -261,7 +261,7 @@ const SettingsPage = () => {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 glass-card p-6 md:p-8 rounded-3xl min-h-[500px]">
+        <div className="flex-1 glass-card p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl min-h-0 md:min-h-[500px] min-w-0">
           {error && (
             <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm p-4 rounded-xl mb-6">
               {error}
@@ -275,8 +275,8 @@ const SettingsPage = () => {
               </h3>
               
               {/* Logo upload */}
-              <div className="flex items-center gap-6 p-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5">
-                <div className="w-20 h-20 rounded-2xl bg-primary-600/10 dark:bg-primary-600/20 border-2 border-dashed border-primary-400/40 flex items-center justify-center overflow-hidden shrink-0">
+              <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 p-3 sm:p-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-primary-600/10 dark:bg-primary-600/20 border-2 border-dashed border-primary-400/40 flex items-center justify-center overflow-hidden shrink-0">
                   {businessData.logoUrl ? (
                     <img
                       src={getLogoUrl(businessData.logoUrl)}
@@ -287,7 +287,7 @@ const SettingsPage = () => {
                     <ImageIcon size={28} className="text-primary-400 opacity-60" />
                   )}
                 </div>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 items-center sm:items-start text-center sm:text-left">
                   <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Logo de la Empresa</p>
                   <p className="text-xs text-slate-500">PNG, JPG o SVG · Máximo 5 MB</p>
                   <input
@@ -356,7 +356,7 @@ const SettingsPage = () => {
                     <div 
                       key={theme.id}
                       onClick={() => handleConfigChange('theme', theme.id)}
-                      className={`w-16 h-16 rounded-2xl cursor-pointer flex items-center justify-center transition-all ${theme.color} ${configData.theme === theme.id ? 'ring-4 ring-white ring-offset-2 ring-offset-slate-900 scale-110 shadow-lg' : 'opacity-60 hover:opacity-100 hover:scale-105'}`}
+                      className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl cursor-pointer flex items-center justify-center transition-all ${theme.color} ${configData.theme === theme.id ? 'ring-4 ring-white ring-offset-2 ring-offset-slate-900 scale-110 shadow-lg' : 'opacity-60 hover:opacity-100 hover:scale-105'}`}
                       title={theme.name}
                     >
                       {configData.theme === theme.id && <CheckCircle2 className="text-white" size={24} />}
@@ -367,18 +367,18 @@ const SettingsPage = () => {
 
               <div className="pt-6 border-t border-white/10 dark:border-white/10 border-slate-200">
                 <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-4 block">Modo de Pantalla</label>
-                <div className="flex bg-white/50 dark:bg-white/5 p-1 rounded-2xl w-max backdrop-blur-md shadow-sm border border-slate-200 dark:border-white/10">
+                <div className="flex bg-white/50 dark:bg-white/5 p-1 rounded-2xl w-full sm:w-max backdrop-blur-md shadow-sm border border-slate-200 dark:border-white/10">
                   <button
                     type="button"
                     onClick={() => handleConfigChange('darkMode', false)}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all ${!configData.darkMode ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
+                    className={`flex items-center justify-center gap-2 flex-1 sm:flex-initial px-4 sm:px-6 py-3 rounded-xl transition-all ${!configData.darkMode ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
                   >
                     <Sun size={18} /> Claro
                   </button>
                   <button
                     type="button"
                     onClick={() => handleConfigChange('darkMode', true)}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl transition-all ${configData.darkMode ? 'bg-slate-800 text-white shadow-md border border-white/10' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}
+                    className={`flex items-center justify-center gap-2 flex-1 sm:flex-initial px-4 sm:px-6 py-3 rounded-xl transition-all ${configData.darkMode ? 'bg-slate-800 text-white shadow-md border border-white/10' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}
                   >
                     <Moon size={18} /> Oscuro
                   </button>
@@ -439,7 +439,7 @@ const SettingsPage = () => {
                   </select>
                 </div>
 
-                <div className="col-span-full border-t border-slate-200 dark:border-white/10 pt-6 mt-2">
+                <div className="col-span-1 md:col-span-2 border-t border-slate-200 dark:border-white/10 pt-6 mt-2">
                   <h4 className="text-md font-bold text-slate-800 dark:text-white mb-4">Configuración de Impuestos</h4>
                   <div className="flex items-center gap-3 mb-6">
                     <input 
