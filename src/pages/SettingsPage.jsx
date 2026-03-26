@@ -220,11 +220,11 @@ const SettingsPage = () => {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6 animate-fade-in relative z-10 block w-full h-full overflow-x-hidden">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+    <div className="space-y-3 sm:space-y-6 animate-fade-in relative z-10 block w-full h-full overflow-x-hidden">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-3">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Configuración del Negocio</h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm sm:text-base">Gestiona los detalles de la empresa y preferencias del sistema</p>
+          <h2 className="text-xl sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Configuración del Negocio</h2>
+          <p className="text-slate-500 dark:text-slate-400 mt-0.5 sm:mt-1 text-xs sm:text-base">Gestiona los detalles de la empresa y preferencias del sistema</p>
         </div>
         {success && (
           <div className="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 px-3 sm:px-4 py-2 rounded-xl">
@@ -234,9 +234,9 @@ const SettingsPage = () => {
         )}
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+      <div className="flex flex-col md:flex-row gap-3 md:gap-6">
         {/* Sidebar Tabs */}
-        <div className="w-full md:w-64 flex flex-row md:flex-col gap-2 overflow-x-auto pb-1 md:pb-0">
+        <div className="w-full md:w-64 flex flex-row md:flex-col gap-1.5 sm:gap-2 overflow-x-auto pb-1 md:pb-0">
           <button 
             onClick={() => setActiveTab('general')}
             className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl transition-all text-left whitespace-nowrap shrink-0 ${activeTab === 'general' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}`}
@@ -261,7 +261,7 @@ const SettingsPage = () => {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 glass-card p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl min-h-0 md:min-h-[500px] min-w-0">
+        <div className="flex-1 glass-card p-3 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl min-h-0 md:min-h-[500px] min-w-0">
           {error && (
             <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm p-4 rounded-xl mb-6">
               {error}
@@ -269,8 +269,8 @@ const SettingsPage = () => {
           )}
 
           {activeTab === 'general' && (
-            <form onSubmit={handleSaveGeneral} className="space-y-6">
-              <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+            <form onSubmit={handleSaveGeneral} className="space-y-4 sm:space-y-6">
+              <h3 className="text-base sm:text-xl font-bold text-slate-800 dark:text-white mb-4 sm:mb-6 flex items-center gap-2">
                 <Building className="text-primary-600 dark:text-primary-400" /> Datos de la Empresa
               </h3>
               
@@ -328,7 +328,7 @@ const SettingsPage = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <Input label="Nombre de la Empresa" required value={businessData.name} onChange={e => handleBusinessChange('name', e.target.value)} />
                 <Input label="NIT / RUT" value={businessData.taxId} onChange={e => handleBusinessChange('taxId', e.target.value)} />
                 <Input label="Teléfono" type="tel" icon={Phone} value={businessData.phone} onChange={e => handleBusinessChange('phone', e.target.value)} />
@@ -344,19 +344,19 @@ const SettingsPage = () => {
           )}
 
           {activeTab === 'appearance' && (
-            <form onSubmit={handleSaveConfig} className="space-y-6">
-              <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+            <form onSubmit={handleSaveConfig} className="space-y-4 sm:space-y-6">
+              <h3 className="text-base sm:text-xl font-bold text-slate-800 dark:text-white mb-4 sm:mb-6 flex items-center gap-2">
                 <MonitorSmartphone className="text-primary-600 dark:text-primary-400" /> Personalización Visual
               </h3>
 
               <div>
                 <label className="text-sm text-slate-600 dark:text-slate-300 mb-4 block">Color Principal del Sistema</label>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-3 sm:gap-4">
                   {THEMES.map(theme => (
-                    <div 
+                    <div
                       key={theme.id}
                       onClick={() => handleConfigChange('theme', theme.id)}
-                      className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl cursor-pointer flex items-center justify-center transition-all ${theme.color} ${configData.theme === theme.id ? 'ring-4 ring-white ring-offset-2 ring-offset-slate-900 scale-110 shadow-lg' : 'opacity-60 hover:opacity-100 hover:scale-105'}`}
+                      className={`w-10 h-10 sm:w-16 sm:h-16 rounded-lg sm:rounded-2xl cursor-pointer flex items-center justify-center transition-all ${theme.color} ${configData.theme === theme.id ? 'ring-4 ring-white ring-offset-2 ring-offset-slate-900 scale-110 shadow-lg' : 'opacity-60 hover:opacity-100 hover:scale-105'}`}
                       title={theme.name}
                     >
                       {configData.theme === theme.id && <CheckCircle2 className="text-white" size={24} />}
@@ -404,12 +404,12 @@ const SettingsPage = () => {
           )}
 
           {activeTab === 'taxes' && (
-            <form onSubmit={handleSaveConfig} className="space-y-6">
-              <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
+            <form onSubmit={handleSaveConfig} className="space-y-4 sm:space-y-6">
+              <h3 className="text-base sm:text-xl font-bold text-slate-800 dark:text-white mb-4 sm:mb-6 flex items-center gap-2">
                 <DollarSign className="text-primary-600 dark:text-primary-400" /> Preferencias Regionales
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <label className="text-sm text-slate-600 dark:text-slate-300 mb-2 block">Moneda Base</label>
                   <select 

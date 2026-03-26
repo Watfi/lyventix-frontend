@@ -150,30 +150,30 @@ const MainLayout = ({ children }) => {
 
       {/* Main Content */}
       <main className="flex-1 md:ml-72 flex flex-col min-h-screen">
-        <header className="h-16 md:h-20 border-b border-primary-200/30 dark:border-white/5 px-4 md:px-8 flex items-center justify-between bg-white/60 dark:bg-slate-950/40 backdrop-blur-2xl sticky top-0 z-10 shadow-sm shadow-primary-900/5 dark:shadow-none">
-          <div className="flex items-center gap-3">
+        <header className="h-14 sm:h-16 md:h-20 border-b border-primary-200/30 dark:border-white/5 px-2 sm:px-4 md:px-8 flex items-center justify-between bg-white/60 dark:bg-slate-950/40 backdrop-blur-2xl sticky top-0 z-10 shadow-sm shadow-primary-900/5 dark:shadow-none gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
             {/* Hamburger menu - mobile only */}
             <button
               onClick={() => setSidebarOpen(true)}
-              className="p-2 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors md:hidden"
+              className="p-1.5 sm:p-2 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors md:hidden shrink-0"
             >
-              <Menu size={24} />
+              <Menu size={22} />
             </button>
-            <div>
-              <h2 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-white">Buen día, {user?.username || 'Admin'} 👋</h2>
+            <div className="min-w-0">
+              <h2 className="text-sm sm:text-lg md:text-xl font-semibold text-slate-800 dark:text-white truncate">Buen día, <span className="hidden sm:inline">{user?.username || 'Admin'}</span><span className="sm:hidden">{(user?.username || 'Admin').split(' ')[0]}</span> 👋</h2>
               {user?.branchName && (
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  <Building2 size={10} className="inline mr-1" />{user.branchName}
+                <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+                  <Building2 size={10} className="inline mr-1" /><span className="truncate">{user.branchName}</span>
                 </p>
               )}
             </div>
           </div>
-          <div className="flex items-center gap-2 md:gap-4">
-            <div onClick={() => navigate('/settings')} className="w-10 h-10 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-900/5 dark:hover:bg-white/5 transition-all cursor-pointer shadow-sm">
-              <Settings size={20} />
+          <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 shrink-0">
+            <div onClick={() => navigate('/settings')} className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-900/5 dark:hover:bg-white/5 transition-all cursor-pointer shadow-sm">
+              <Settings size={18} className="sm:w-5 sm:h-5" />
             </div>
-            <div onClick={handleLogout} className="w-10 h-10 rounded-xl border border-rose-100 dark:border-rose-900/30 flex items-center justify-center text-rose-500 dark:text-rose-400 hover:text-white hover:bg-rose-500 transition-all cursor-pointer shadow-sm">
-              <LogOut size={20} />
+            <div onClick={handleLogout} className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl border border-rose-100 dark:border-rose-900/30 flex items-center justify-center text-rose-500 dark:text-rose-400 hover:text-white hover:bg-rose-500 transition-all cursor-pointer shadow-sm">
+              <LogOut size={18} className="sm:w-5 sm:h-5" />
             </div>
           </div>
         </header>
