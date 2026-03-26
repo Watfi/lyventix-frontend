@@ -229,9 +229,9 @@ const InventoryPage = () => {
       {/* Branch selector + search */}
       <div className="glass-panel p-3 sm:p-4 rounded-2xl sm:rounded-3xl flex flex-col md:flex-row items-stretch md:items-center gap-3 sm:gap-4">
         <select value={selectedBranch} onChange={(e) => setSelectedBranch(e.target.value)}
-          className="bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-white/10 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-slate-800 dark:text-white outline-none focus:border-primary-500 transition-colors w-full md:min-w-[200px] md:w-auto [&>option]:bg-white [&>option]:text-white">
-          {branches.map(b => <option key={b.id} value={b.id} className="bg-white dark:bg-[#1e293b] text-slate-800 dark:text-white">{b.name}</option>)}
-          {branches.length === 0 && <option value="" className="bg-white dark:bg-[#1e293b] text-slate-800 dark:text-white">No hay sucursales</option>}
+          className="bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-white/10 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-slate-800 dark:text-white outline-none focus:border-primary-500 transition-colors w-full md:min-w-[200px] md:w-auto [&>option]:bg-white dark:[&>option]:bg-[#1e293b] [&>option]:text-slate-800 dark:[&>option]:text-white">
+          {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+          {branches.length === 0 && <option value="">No hay sucursales</option>}
         </select>
         <Input className="flex-1" placeholder="Filtrar productos en inventario..." icon={Search} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
         <div className="text-sm text-slate-500 dark:text-slate-400 whitespace-nowrap">{filteredStock.length} producto{filteredStock.length !== 1 ? 's' : ''}</div>
@@ -576,8 +576,8 @@ const InventoryPage = () => {
               <Input label="Stock Máximo" type="number" value={editForm.maxQuantity}
                 onChange={(e) => setEditForm({ ...editForm, maxQuantity: e.target.value })}
                 placeholder="Ej: 100" />
-              <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3">
-                <p className="text-amber-300 text-xs">Cuando el stock baje del mínimo, se mostrará una alerta de "Stock Bajo".</p>
+              <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-300 dark:border-amber-500/20 rounded-xl p-3">
+                <p className="text-amber-700 dark:text-amber-300 text-xs">Cuando el stock baje del mínimo, se mostrará una alerta de "Stock Bajo".</p>
               </div>
               <div className="flex gap-3 pt-4">
                 <Button type="button" variant="outline" onClick={() => setShowEditModal(false)} className="flex-1">Cancelar</Button>
