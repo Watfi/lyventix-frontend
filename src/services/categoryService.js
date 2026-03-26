@@ -18,6 +18,9 @@ export const categoryService = {
 
   deleteCategory: (id) =>
     api.delete(`${BASE}/${id}`, { baseURL: BASE_URL }),
+
+  seedDefaults: (businessId) =>
+    api.post(`${BASE}/seed-defaults`, null, { baseURL: BASE_URL, params: { businessId } }),
 };
 
 export default categoryService;
