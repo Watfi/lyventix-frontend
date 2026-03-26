@@ -161,9 +161,17 @@ const CashRegisterPage = () => {
     return '$' + Number(val).toLocaleString('es-CO', { minimumFractionDigits: 0 });
   };
 
+  const parseDate = (val) => {
+    if (!val) return null;
+    if (Array.isArray(val)) return new Date(val[0], (val[1] || 1) - 1, val[2] || 1, val[3] || 0, val[4] || 0, val[5] || 0);
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d;
+  };
+
   const fmtDate = (val) => {
-    if (!val) return '-';
-    return new Date(val).toLocaleString('es-CO', {
+    const d = parseDate(val);
+    if (!d) return '-';
+    return d.toLocaleString('es-CO', {
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit', second: '2-digit',
     });

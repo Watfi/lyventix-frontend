@@ -11,6 +11,19 @@ const fmt = (val) => {
   return '$' + Number(val).toLocaleString('es-CO', { minimumFractionDigits: 0 });
 };
 
+const parseDate = (val) => {
+  if (!val) return null;
+  if (Array.isArray(val)) return new Date(val[0], (val[1] || 1) - 1, val[2] || 1, val[3] || 0, val[4] || 0, val[5] || 0);
+  const d = new Date(val);
+  return isNaN(d.getTime()) ? null : d;
+};
+
+const fmtDate = (val) => {
+  const d = parseDate(val);
+  if (!d) return '-';
+  return d.toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' });
+};
+
 const addHeader = (doc, title, businessName, subtitle) => {
   const pageWidth = doc.internal.pageSize.getWidth();
 
@@ -97,7 +110,7 @@ export const generateSalesReport = (sales, dashboard, businessName) => {
       head: [['Factura', 'Fecha', 'Cliente', 'Estado', 'Metodo', 'Total']],
       body: sales.map(s => [
         s.invoiceNumber || '-',
-        s.createdAt ? new Date(s.createdAt).toLocaleDateString('es-CO') : '-',
+        fmtDate(s.createdAt),
         s.customerName || 'Sin cliente',
         s.status === 'COMPLETED' ? 'Completada' : s.status === 'CANCELLED' ? 'Cancelada' : 'Pendiente',
         s.paymentMethod === 'CASH' ? 'Efectivo' : s.paymentMethod === 'CARD' ? 'Tarjeta' : s.paymentMethod || '-',
@@ -376,8 +389,8 @@ export const generateCashReport = (sessions, businessName) => {
       body: sessions.map(s => {
         const earnings = Number(s.expectedBalance || 0) - Number(s.openingBalance || 0);
         return [
-          s.openingDate ? new Date(s.openingDate).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' }) : '-',
-          s.closingDate ? new Date(s.closingDate).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' }) : '-',
+          fmtDate(s.openingDate),
+          fmtDate(s.closingDate),
           fmt(s.openingBalance),
           fmt(s.expectedBalance),
           fmt(s.actualBalance),
