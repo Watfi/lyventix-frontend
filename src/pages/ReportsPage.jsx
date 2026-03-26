@@ -59,14 +59,15 @@ const ReportsPage = () => {
   const { businessId, user } = useAuthStore();
   const [dashboard, setDashboard] = useState(null);
   const [sales, setSales] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [exporting, setExporting] = useState({});
   const [activeTab, setActiveTab] = useState('ventas');
 
   const today = new Date().toISOString().slice(0, 10);
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10);
-  const [dateFrom, setDateFrom] = useState(thirtyDaysAgo);
+  const oneYearAgo = new Date(Date.now() - 365 * 86400000).toISOString().slice(0, 10);
+  const [dateFrom, setDateFrom] = useState(oneYearAgo);
   const [dateTo, setDateTo] = useState(today);
 
   useEffect(() => {
@@ -74,12 +75,14 @@ const ReportsPage = () => {
       if (!businessId) return;
       try {
         setLoading(true);
-        const [dashRes, salesRes] = await Promise.all([
+        const [dashRes, salesRes, custRes] = await Promise.all([
           dashboardService.getDashboard(businessId),
           saleService.getSales(businessId, { size: 1000, sort: 'createdAt,desc' }),
+          customerService.getCustomers(businessId, { size: 1000 }),
         ]);
         setDashboard(dashRes.data);
         setSales(salesRes.data?.content || salesRes.data || []);
+        setCustomers(custRes.data?.content || custRes.data || []);
       } catch (err) {
         setError(err.response?.data?.message || 'Error al cargar reportes');
       } finally {
@@ -463,17 +466,41 @@ const ReportsPage = () => {
 
       {/* === CLIENTES TAB === */}
       {activeTab === 'clientes' && (
-        <div className="glass-panel p-6 rounded-3xl">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="font-bold text-slate-800 dark:text-white text-lg">Reporte de Clientes</h3>
-            <button onClick={handleExportCustomers} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary-500/10 text-primary-500 text-sm font-medium hover:bg-primary-500/20">
-              {exporting.customers ? <CheckCircle2 size={14} /> : <Download size={14} />} Exportar PDF
-            </button>
+        <div className="space-y-6">
+          <div className="glass-panel p-6 rounded-3xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-slate-800 dark:text-white text-lg">Reporte de Clientes</h3>
+              <button onClick={handleExportCustomers} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary-500/10 text-primary-500 text-sm font-medium hover:bg-primary-500/20">
+                {exporting.customers ? <CheckCircle2 size={14} /> : <Download size={14} />} Exportar PDF
+              </button>
+            </div>
+            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-2xl p-4 text-center">
+              <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">Clientes Registrados</p>
+              <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">{customers.length}</p>
+            </div>
           </div>
-          <p className="text-slate-500 text-sm">Directorio completo de clientes con datos de contacto y documentos.</p>
-          <div className="mt-4 bg-purple-50 dark:bg-purple-900/20 rounded-2xl p-4 text-center">
-            <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">Clientes Registrados</p>
-            <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">{dashboard?.customersCount || 0}</p>
+          <div className="glass-panel rounded-3xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead><tr className="border-b border-slate-200 dark:border-white/5">
+                  <th className="text-left p-3 text-slate-500 font-medium text-xs">Nombre</th>
+                  <th className="text-left p-3 text-slate-500 font-medium text-xs">Email</th>
+                  <th className="text-left p-3 text-slate-500 font-medium text-xs">Telefono</th>
+                  <th className="text-left p-3 text-slate-500 font-medium text-xs">Documento</th>
+                </tr></thead>
+                <tbody>
+                  {customers.map((c, i) => (
+                    <tr key={c.id || i} className="border-b border-slate-100 dark:border-white/5">
+                      <td className="p-3 text-xs font-medium text-slate-800 dark:text-white">{c.fullName || `${c.firstName || ''} ${c.lastName || ''}`.trim() || '-'}</td>
+                      <td className="p-3 text-xs text-slate-600 dark:text-slate-400">{c.email || '-'}</td>
+                      <td className="p-3 text-xs text-slate-600 dark:text-slate-400">{c.phone || '-'}</td>
+                      <td className="p-3 text-xs text-slate-600 dark:text-slate-400">{c.documentNumber || '-'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {customers.length === 0 && <p className="text-slate-500 text-center py-8 text-sm">No hay clientes registrados</p>}
+            </div>
           </div>
         </div>
       )}
