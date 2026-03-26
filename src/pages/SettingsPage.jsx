@@ -223,7 +223,6 @@ const SettingsPage = () => {
     <div className="space-y-1 sm:space-y-6 animate-fade-in relative z-10 block w-full h-full overflow-x-hidden max-w-full text-[11px] sm:text-base">
       <div className="flex items-center justify-between gap-1 sm:gap-3">
         <h2 className="text-sm sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Configuración</h2>
-        </div>
         {success && (
           <div className="flex items-center gap-1 text-emerald-400 bg-emerald-500/10 px-2 py-1 sm:px-4 sm:py-2 rounded-lg">
             <CheckCircle2 size={12} className="shrink-0" />
