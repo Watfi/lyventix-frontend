@@ -8,7 +8,25 @@ import productService from '../services/productService';
 import categoryService from '../services/categoryService';
 
 const ProductsPage = () => {
-  const { businessId } = useAuthStore();
+  const { businessId, user } = useAuthStore();
+  const businessType = user?.businessType || 'OTHER';
+
+  const fieldsByBusinessType = {
+    CLOTHING_STORE: ['brand', 'color', 'material', 'gender', 'season'],
+    MINIMARKET: ['brand', 'saleUnitOfMeasure', 'conversionFactor', 'sanitaryRegistration'],
+    PHARMACY: ['brand', 'model', 'sanitaryRegistration', 'saleUnitOfMeasure', 'conversionFactor'],
+    HARDWARE_STORE: ['brand', 'model', 'material', 'saleUnitOfMeasure', 'conversionFactor'],
+    ELECTRONICS: ['brand', 'model', 'warrantyDays'],
+    AUTO_PARTS: ['brand', 'model', 'warrantyDays'],
+    BEAUTY_SALON: ['brand', 'sanitaryRegistration'],
+    RESTAURANT: ['brand'],
+    BAKERY: ['brand', 'saleUnitOfMeasure', 'conversionFactor'],
+    BOOKSTORE: ['brand'],
+    OTHER: ['brand', 'model', 'color', 'material'],
+  };
+
+  const visibleFields = fieldsByBusinessType[businessType] || fieldsByBusinessType['OTHER'];
+  const showField = (field) => visibleFields.includes(field);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +34,7 @@ const ProductsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ name: '', sku: '', barcode: '', salePrice: '', costPrice: '', categoryId: '', productType: 'SIMPLE', taxable: true, taxRate: '19', description: '' });
+  const [form, setForm] = useState({ name: '', sku: '', barcode: '', salePrice: '', costPrice: '', categoryId: '', productType: 'SIMPLE', taxable: true, taxRate: '19', description: '', brand: '', model: '', color: '', material: '', gender: '', season: '', saleUnitOfMeasure: '', conversionFactor: '', sanitaryRegistration: '', warrantyDays: '' });
 
   const fetchProducts = async () => {
     if (!businessId) return;
@@ -55,6 +73,16 @@ const ProductsPage = () => {
         taxable: form.taxable,
         taxRate: parseFloat(form.taxRate) || 0,
         active: true,
+        brand: form.brand || null,
+        model: form.model || null,
+        color: form.color || null,
+        material: form.material || null,
+        gender: form.gender || null,
+        season: form.season || null,
+        saleUnitOfMeasure: form.saleUnitOfMeasure || null,
+        conversionFactor: form.conversionFactor ? parseFloat(form.conversionFactor) : null,
+        sanitaryRegistration: form.sanitaryRegistration || null,
+        warrantyDays: form.warrantyDays ? parseInt(form.warrantyDays) : null,
       };
       if (editing) { await productService.updateProduct(editing.id, payload); }
       else { await productService.createProduct(businessId, payload); }
@@ -64,7 +92,7 @@ const ProductsPage = () => {
 
   const handleEdit = (p) => {
     setEditing(p);
-    setForm({ name: p.name || '', sku: p.sku || '', barcode: p.barcode || '', salePrice: p.salePrice || '', costPrice: p.costPrice || '', categoryId: p.categoryId || '', productType: p.productType || 'SIMPLE', taxable: p.taxable ?? true, taxRate: p.taxRate || '19', description: p.description || '' });
+    setForm({ name: p.name || '', sku: p.sku || '', barcode: p.barcode || '', salePrice: p.salePrice || '', costPrice: p.costPrice || '', categoryId: p.categoryId || '', productType: p.productType || 'SIMPLE', taxable: p.taxable ?? true, taxRate: p.taxRate || '19', description: p.description || '', brand: p.brand || '', model: p.model || '', color: p.color || '', material: p.material || '', gender: p.gender || '', season: p.season || '', saleUnitOfMeasure: p.saleUnitOfMeasure || '', conversionFactor: p.conversionFactor || '', sanitaryRegistration: p.sanitaryRegistration || '', warrantyDays: p.warrantyDays || '' });
     setShowModal(true);
   };
 
@@ -73,7 +101,7 @@ const ProductsPage = () => {
     try { await productService.deleteProduct(id); fetchProducts(); } catch (err) { setError(err.response?.data?.message || 'Error'); }
   };
 
-  const resetForm = () => setForm({ name: '', sku: '', barcode: '', salePrice: '', costPrice: '', categoryId: '', productType: 'SIMPLE', taxable: true, taxRate: '19', description: '' });
+  const resetForm = () => setForm({ name: '', sku: '', barcode: '', salePrice: '', costPrice: '', categoryId: '', productType: 'SIMPLE', taxable: true, taxRate: '19', description: '', brand: '', model: '', color: '', material: '', gender: '', season: '', saleUnitOfMeasure: '', conversionFactor: '', sanitaryRegistration: '', warrantyDays: '' });
 
   const fmt = (v) => v != null ? '$' + Number(v).toLocaleString('es-CO') : '$0';
 
@@ -183,6 +211,60 @@ const ProductsPage = () => {
                 <Input label="Impuesto %" type="number" value={form.taxRate} onChange={(e) => setForm({ ...form, taxRate: e.target.value })} />
               </div>
               <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descripción</label><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-800 dark:text-white outline-none focus:border-primary-500 transition-colors h-20 resize-none shadow-sm shadow-primary-900/5 dark:shadow-none" /></div>
+              {visibleFields.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-white/10 pb-2">Información Adicional</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {showField('brand') && <Input label="Marca" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} />}
+                    {showField('model') && <Input label="Modelo/Referencia" value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} />}
+                    {showField('color') && <Input label="Color" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} />}
+                    {showField('material') && <Input label="Material" value={form.material} onChange={(e) => setForm({ ...form, material: e.target.value })} />}
+                    {showField('gender') && (
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Género</label>
+                        <select value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })} className="w-full bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-800 dark:text-white outline-none focus:border-primary-500 transition-colors [&>option]:bg-white dark:[&>option]:bg-white [&>option]:text-slate-800 dark:[&>option]:text-white">
+                          <option value="">Seleccionar...</option>
+                          <option value="Hombre">Hombre</option>
+                          <option value="Mujer">Mujer</option>
+                          <option value="Unisex">Unisex</option>
+                          <option value="Niño">Niño</option>
+                          <option value="Niña">Niña</option>
+                        </select>
+                      </div>
+                    )}
+                    {showField('season') && (
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Temporada</label>
+                        <select value={form.season} onChange={(e) => setForm({ ...form, season: e.target.value })} className="w-full bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-800 dark:text-white outline-none focus:border-primary-500 transition-colors [&>option]:bg-white dark:[&>option]:bg-white [&>option]:text-slate-800 dark:[&>option]:text-white">
+                          <option value="">Seleccionar...</option>
+                          <option value="Primavera-Verano">Primavera-Verano</option>
+                          <option value="Otoño-Invierno">Otoño-Invierno</option>
+                          <option value="Todo el año">Todo el año</option>
+                        </select>
+                      </div>
+                    )}
+                    {showField('saleUnitOfMeasure') && (
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Unidad de Venta</label>
+                        <select value={form.saleUnitOfMeasure} onChange={(e) => setForm({ ...form, saleUnitOfMeasure: e.target.value })} className="w-full bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-800 dark:text-white outline-none focus:border-primary-500 transition-colors [&>option]:bg-white dark:[&>option]:bg-white [&>option]:text-slate-800 dark:[&>option]:text-white">
+                          <option value="">Seleccionar...</option>
+                          <option value="Unidad">Unidad</option>
+                          <option value="Caja">Caja</option>
+                          <option value="Kg">Kg</option>
+                          <option value="Lb">Lb</option>
+                          <option value="Litro">Litro</option>
+                          <option value="Metro">Metro</option>
+                          <option value="Docena">Docena</option>
+                          <option value="Paquete">Paquete</option>
+                        </select>
+                      </div>
+                    )}
+                    {showField('conversionFactor') && <Input label="Factor de Conversión" type="number" step="0.01" placeholder="Ej: 24 unidades por caja" value={form.conversionFactor} onChange={(e) => setForm({ ...form, conversionFactor: e.target.value })} />}
+                    {showField('sanitaryRegistration') && <Input label="Registro Sanitario (INVIMA)" value={form.sanitaryRegistration} onChange={(e) => setForm({ ...form, sanitaryRegistration: e.target.value })} />}
+                    {showField('warrantyDays') && <Input label="Garantía (días)" type="number" value={form.warrantyDays} onChange={(e) => setForm({ ...form, warrantyDays: e.target.value })} />}
+                  </div>
+                </div>
+              )}
               <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex items-center gap-3">
                 <Warehouse size={18} className="text-amber-400" />
                 <p className="text-amber-300 text-xs">El stock se gestiona desde el módulo de <strong>Inventario</strong> por sucursal.</p>
