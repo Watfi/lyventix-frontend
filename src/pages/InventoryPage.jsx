@@ -249,7 +249,90 @@ const InventoryPage = () => {
       {loading ? (
         <div className="flex items-center justify-center h-40"><Loader2 className="animate-spin text-primary-400" size={40} /></div>
       ) : (
-        <div className="glass-panel rounded-3xl overflow-hidden">
+        <>
+          {/* Mobile card view */}
+          <div className="lg:hidden space-y-3">
+            {filteredStock.map((item) => (
+              <div key={item.inventoryId || item.productId} className="glass-card p-4 rounded-2xl">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-primary-600/20 rounded-xl flex items-center justify-center text-primary-400 shrink-0"><Package size={18} /></div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-slate-800 dark:text-white font-semibold text-sm truncate">{item.productName}</p>
+                    <p className="text-slate-500 text-xs font-mono">{item.productSku || 'Sin SKU'}</p>
+                  </div>
+                  <span className={`font-black text-xl ${item.lowStock ? 'text-red-400' : 'text-emerald-400'}`}>{item.quantity}</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  <span className="bg-slate-100 dark:bg-white/5 px-2 py-1 rounded-lg text-[10px] text-slate-600 dark:text-slate-300">{item.categoryName || 'Sin cat.'}</span>
+                  {item.lowStock
+                    ? <span className="bg-red-500/10 text-red-400 text-[10px] font-bold px-2 py-1 rounded-lg inline-flex items-center gap-1"><AlertCircle size={10} />Bajo</span>
+                    : <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-1 rounded-lg">Normal</span>}
+                  <span className="text-slate-800 dark:text-white font-bold text-xs ml-auto">{fmt(item.salePrice)}</span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-slate-500 mb-3">
+                  <span>Mín: {item.minQuantity ?? '-'}</span>
+                  <span>Máx: {item.maxQuantity ?? '-'}</span>
+                </div>
+                <div className="flex gap-2 pt-2 border-t border-slate-200 dark:border-white/5">
+                  <button onClick={() => toggleExpand(item)} className="flex-1 flex items-center justify-center gap-1.5 p-2 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 rounded-xl text-slate-500 dark:text-slate-400 text-xs transition-colors">
+                    <History size={14} /><span>Kardex</span>
+                  </button>
+                  <button onClick={() => openEditModal(item)} className="flex-1 flex items-center justify-center gap-1.5 p-2 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 rounded-xl text-slate-500 dark:text-slate-400 text-xs transition-colors">
+                    <Edit2 size={14} /><span>Config</span>
+                  </button>
+                  <button onClick={() => openTransferModal(item)} className="flex-1 flex items-center justify-center gap-1.5 p-2 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 rounded-xl text-slate-500 dark:text-slate-400 text-xs transition-colors" disabled={branches.length < 2}>
+                    <ArrowLeftRight size={14} /><span>Transferir</span>
+                  </button>
+                </div>
+                {/* Mobile expanded kardex */}
+                <AnimatePresence>
+                  {expandedItem === item.productId && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
+                      <div className="mt-3 pt-3 border-t border-slate-200 dark:border-white/5">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Clock size={14} className="text-primary-400" />
+                          <h4 className="text-slate-800 dark:text-white font-semibold text-xs">Historial</h4>
+                        </div>
+                        {loadingKardex ? (
+                          <div className="flex items-center justify-center py-4"><Loader2 className="animate-spin text-primary-400" size={20} /></div>
+                        ) : kardex.length > 0 ? (
+                          <div className="space-y-2 max-h-48 overflow-y-auto">
+                            {kardex.map((mov, idx) => (
+                              <div key={mov.id || idx} className="flex items-center gap-3 bg-slate-50 dark:bg-white/[0.03] rounded-xl px-3 py-2">
+                                <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${mov.movementType === 'ENTRY' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
+                                  {mov.movementType === 'ENTRY' ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <span className={`font-bold text-xs ${mov.movementType === 'ENTRY' ? 'text-emerald-400' : 'text-red-400'}`}>
+                                    {mov.movementType === 'ENTRY' ? '+' : '-'}{mov.quantity}
+                                  </span>
+                                  <span className="text-slate-500 text-xs ml-2">{reasonLabels[mov.reason] || mov.reason}</span>
+                                </div>
+                                <span className="text-slate-500 text-[10px] shrink-0">
+                                  {mov.createdAt ? new Date(mov.createdAt).toLocaleDateString('es-CO', { day: '2-digit', month: 'short' }) : '-'}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-slate-500 text-xs text-center py-3">Sin movimientos</p>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+            {filteredStock.length === 0 && (
+              <div className="text-center py-16 text-slate-500">
+                <Warehouse size={48} className="mx-auto mb-4 opacity-40" />
+                <p>No hay productos en inventario</p>
+              </div>
+            )}
+          </div>
+
+          {/* Desktop table view */}
+          <div className="glass-panel rounded-3xl overflow-hidden hidden lg:block">
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
               <thead className="text-xs text-slate-500 uppercase bg-slate-50 dark:bg-white/[0.02] border-b border-slate-200 dark:border-white/5">
@@ -381,6 +464,7 @@ const InventoryPage = () => {
             </div>
           )}
         </div>
+        </>
       )}
 
       {/* ═══════ Entry/Exit Modal ═══════ */}

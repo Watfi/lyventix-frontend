@@ -179,9 +179,9 @@ const CashRegisterPage = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Control de Caja</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Control de Caja</h2>
           <p className="text-slate-500 dark:text-slate-400 mt-1">
             Supervisa el flujo de efectivo y sesiones diarias
             {user?.branchName && <span className="ml-2 text-primary-500 font-semibold">• {user.branchName}</span>}
@@ -260,7 +260,59 @@ const CashRegisterPage = () => {
                 Historial de Sesiones
               </h4>
             </div>
-            <div className="overflow-x-auto">
+            {/* Mobile card view */}
+            <div className="lg:hidden p-4 space-y-3">
+              {sessionHistory.length > 0 ? sessionHistory.map((s) => (
+                <div key={s.id} className="bg-white/40 dark:bg-white/[0.03] border border-slate-200/50 dark:border-white/5 rounded-2xl p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                      s.status === 'OPEN'
+                        ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400'
+                        : 'bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400'
+                    }`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${s.status === 'OPEN' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                      {s.status === 'OPEN' ? 'Abierta' : 'Cerrada'}
+                    </span>
+                    <span className="text-slate-500 text-xs">{s.user?.username || s.user?.firstName || '-'}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 text-xs mb-2">
+                    <Calendar size={11} className="text-slate-400" />
+                    <span>{fmtDate(s.openingDate)}</span>
+                  </div>
+                  {s.closingDate && <p className="text-slate-500 text-xs mb-3">Cierre: {fmtDate(s.closingDate)}</p>}
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="bg-slate-50 dark:bg-white/5 rounded-xl p-2">
+                      <p className="text-slate-500">Apertura</p>
+                      <p className="text-slate-800 dark:text-white font-bold">{fmt(s.openingBalance)}</p>
+                    </div>
+                    <div className="bg-slate-50 dark:bg-white/5 rounded-xl p-2">
+                      <p className="text-slate-500">Esperado</p>
+                      <p className="text-blue-500 font-bold">{fmt(s.expectedBalance)}</p>
+                    </div>
+                    <div className="bg-slate-50 dark:bg-white/5 rounded-xl p-2">
+                      <p className="text-slate-500">Real Cierre</p>
+                      <p className="text-slate-800 dark:text-white font-bold">{s.actualBalance != null ? fmt(s.actualBalance) : '-'}</p>
+                    </div>
+                    <div className="bg-slate-50 dark:bg-white/5 rounded-xl p-2">
+                      <p className="text-slate-500">Ganancias</p>
+                      <p className="text-amber-500 font-bold">{s.expectedBalance != null && s.openingBalance != null ? fmt(Number(s.expectedBalance) - Number(s.openingBalance)) : '-'}</p>
+                    </div>
+                  </div>
+                  {s.difference != null && (
+                    <div className="mt-2 text-center">
+                      <span className={`text-xs font-bold ${Number(s.difference) >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                        Diferencia: {Number(s.difference) > 0 ? '+' : ''}{fmt(s.difference)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )) : (
+                <p className="text-slate-500 text-center py-8">No hay sesiones registradas aún</p>
+              )}
+            </div>
+
+            {/* Desktop table view */}
+            <div className="overflow-x-auto hidden lg:block">
               {sessionHistory.length > 0 ? (
                 <table className="w-full text-sm">
                   <thead>
