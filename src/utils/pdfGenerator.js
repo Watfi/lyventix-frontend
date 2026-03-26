@@ -110,7 +110,7 @@ export const generateSalesReport = (sales, dashboard, businessName) => {
       head: [['Factura', 'Fecha', 'Cliente', 'Estado', 'Metodo', 'Total']],
       body: sales.map(s => [
         s.invoiceNumber || '-',
-        fmtDate(s.createdAt),
+        fmtDate(s.saleDate || s.createdAt),
         s.customerName || 'Sin cliente',
         s.status === 'COMPLETED' ? 'Completada' : s.status === 'CANCELLED' ? 'Cancelada' : 'Pendiente',
         s.paymentMethod === 'CASH' ? 'Efectivo' : s.paymentMethod === 'CARD' ? 'Tarjeta' : s.paymentMethod || '-',

@@ -81,9 +81,7 @@ const ReportsPage = () => {
           customerService.getCustomers(businessId, { size: 1000 }),
         ]);
         setDashboard(dashRes.data);
-        const salesData = salesRes.data?.content || salesRes.data || [];
-        console.log('SALES RAW:', salesData.length, salesData[0]);
-        setSales(salesData);
+        setSales(salesRes.data?.content || salesRes.data || []);
         setCustomers(custRes.data?.content || custRes.data || []);
       } catch (err) {
         setError(err.response?.data?.message || 'Error al cargar reportes');
@@ -98,7 +96,7 @@ const ReportsPage = () => {
     const from = new Date(dateFrom + 'T00:00:00');
     const to = new Date(dateTo + 'T23:59:59');
     return sales.filter(s => {
-      const d = parseDate(s.createdAt);
+      const d = parseDate(s.saleDate || s.createdAt);
       return d && d >= from && d <= to;
     });
   }, [sales, dateFrom, dateTo]);
@@ -115,7 +113,7 @@ const ReportsPage = () => {
   const dailySalesData = useMemo(() => {
     const byDay = {};
     filteredSales.forEach(s => {
-      const d = parseDate(s.createdAt);
+      const d = parseDate(s.saleDate || s.createdAt);
       if (!d) return;
       const key = d.toISOString().slice(0, 10);
       if (!byDay[key]) byDay[key] = { date: key, total: 0, count: 0 };
@@ -346,7 +344,7 @@ const ReportsPage = () => {
                 </tr></thead>
                 <tbody>
                   {filteredSales.slice(0, 20).map(s => {
-                    const d = parseDate(s.createdAt);
+                    const d = parseDate(s.saleDate || s.createdAt);
                     return (
                       <tr key={s.id} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/[0.02]">
                         <td className="p-3 text-xs font-mono text-slate-700 dark:text-slate-300">{s.invoiceNumber || '-'}</td>
