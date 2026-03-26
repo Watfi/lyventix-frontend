@@ -220,7 +220,7 @@ const SettingsPage = () => {
   }
 
   return (
-    <div className="space-y-3 sm:space-y-6 animate-fade-in relative z-10 block w-full h-full overflow-x-hidden">
+    <div className="space-y-2 sm:space-y-6 animate-fade-in relative z-10 block w-full h-full overflow-x-hidden max-w-full">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-3">
         <div>
           <h2 className="text-xl sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Configuración del Negocio</h2>
@@ -234,26 +234,26 @@ const SettingsPage = () => {
         )}
       </div>
 
-      <div className="flex flex-col md:flex-row gap-3 md:gap-6">
+      <div className="flex flex-col md:flex-row gap-2 md:gap-6 max-w-full overflow-hidden">
         {/* Sidebar Tabs */}
-        <div className="w-full md:w-64 flex flex-row md:flex-col gap-1.5 sm:gap-2 overflow-x-auto pb-1 md:pb-0">
+        <div className="w-full md:w-56 flex flex-row md:flex-col gap-1 sm:gap-2 overflow-x-auto pb-1 md:pb-0 shrink-0">
           <button 
             onClick={() => setActiveTab('general')}
-            className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl transition-all text-left whitespace-nowrap shrink-0 ${activeTab === 'general' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}`}
+            className={`flex items-center gap-2 sm:gap-3 px-2.5 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm transition-all text-left whitespace-nowrap shrink-0 ${activeTab === 'general' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}`}
           >
             <Building2 size={20} />
             <span className="font-medium text-sm">General</span>
           </button>
           <button 
             onClick={() => setActiveTab('appearance')}
-            className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl transition-all text-left whitespace-nowrap shrink-0 ${activeTab === 'appearance' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}`}
+            className={`flex items-center gap-2 sm:gap-3 px-2.5 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm transition-all text-left whitespace-nowrap shrink-0 ${activeTab === 'appearance' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}`}
           >
             <Palette size={20} />
             <span className="font-medium text-sm">Apariencia</span>
           </button>
           <button 
             onClick={() => setActiveTab('taxes')}
-            className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl transition-all text-left whitespace-nowrap shrink-0 ${activeTab === 'taxes' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}`}
+            className={`flex items-center gap-2 sm:gap-3 px-2.5 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm transition-all text-left whitespace-nowrap shrink-0 ${activeTab === 'taxes' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}`}
           >
             <DollarSign size={20} />
             <span className="font-medium text-sm">Impuestos y Moneda</span>
@@ -261,7 +261,7 @@ const SettingsPage = () => {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 glass-card p-3 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl min-h-0 md:min-h-[500px] min-w-0">
+        <div className="flex-1 glass-card p-2 sm:p-5 md:p-8 rounded-2xl sm:rounded-3xl min-h-0 md:min-h-[500px] min-w-0 overflow-hidden">
           {error && (
             <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm p-4 rounded-xl mb-6">
               {error}
@@ -275,8 +275,8 @@ const SettingsPage = () => {
               </h3>
               
               {/* Logo upload */}
-              <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 p-3 sm:p-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-primary-600/10 dark:bg-primary-600/20 border-2 border-dashed border-primary-400/40 flex items-center justify-center overflow-hidden shrink-0">
+              <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 p-2 sm:p-4 rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5">
+                <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-primary-600/10 dark:bg-primary-600/20 border-2 border-dashed border-primary-400/40 flex items-center justify-center overflow-hidden shrink-0">
                   {businessData.logoUrl ? (
                     <img
                       src={getLogoUrl(businessData.logoUrl)}
@@ -351,15 +351,15 @@ const SettingsPage = () => {
 
               <div>
                 <label className="text-sm text-slate-600 dark:text-slate-300 mb-4 block">Color Principal del Sistema</label>
-                <div className="flex flex-wrap gap-3 sm:gap-4">
+                <div className="flex flex-wrap gap-2 sm:gap-4">
                   {THEMES.map(theme => (
                     <div
                       key={theme.id}
                       onClick={() => handleConfigChange('theme', theme.id)}
-                      className={`w-10 h-10 sm:w-16 sm:h-16 rounded-lg sm:rounded-2xl cursor-pointer flex items-center justify-center transition-all ${theme.color} ${configData.theme === theme.id ? 'ring-4 ring-white ring-offset-2 ring-offset-slate-900 scale-110 shadow-lg' : 'opacity-60 hover:opacity-100 hover:scale-105'}`}
+                      className={`w-9 h-9 sm:w-14 sm:h-14 rounded-lg sm:rounded-2xl cursor-pointer flex items-center justify-center transition-all ${theme.color} ${configData.theme === theme.id ? 'ring-2 sm:ring-4 ring-white ring-offset-1 sm:ring-offset-2 ring-offset-slate-900 scale-110 shadow-lg' : 'opacity-60 hover:opacity-100 hover:scale-105'}`}
                       title={theme.name}
                     >
-                      {configData.theme === theme.id && <CheckCircle2 className="text-white" size={24} />}
+                      {configData.theme === theme.id && <CheckCircle2 className="text-white" size={16} />}
                     </div>
                   ))}
                 </div>
