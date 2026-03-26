@@ -105,7 +105,7 @@ const ProductsPage = () => {
             attribute2Value: color,
             attribute3Name: '',
             attribute3Value: '',
-            priceAdjustment: 0,
+            variantPrice: '',
             stockQuantity: 0,
             active: true,
           });
@@ -156,20 +156,25 @@ const ProductsPage = () => {
         conversionFactor: form.conversionFactor ? parseFloat(form.conversionFactor) : null,
         sanitaryRegistration: form.sanitaryRegistration || null,
         warrantyDays: form.warrantyDays ? parseInt(form.warrantyDays) : null,
-        variants: hasVariants ? variants.map(v => ({
-          name: v.name,
-          variantSku: v.variantSku || null,
-          variantBarcode: v.variantBarcode || null,
-          attribute1Name: v.attribute1Name || null,
-          attribute1Value: v.attribute1Value || null,
-          attribute2Name: v.attribute2Name || null,
-          attribute2Value: v.attribute2Value || null,
-          attribute3Name: v.attribute3Name || null,
-          attribute3Value: v.attribute3Value || null,
-          priceAdjustment: parseFloat(v.priceAdjustment) || 0,
-          stockQuantity: parseInt(v.stockQuantity) || 0,
-          active: v.active !== false,
-        })) : null,
+        variants: hasVariants ? variants.map(v => {
+          const basePrice = parseFloat(form.salePrice) || 0;
+          const vPrice = parseFloat(v.variantPrice);
+          const adjustment = !isNaN(vPrice) && vPrice > 0 ? vPrice - basePrice : 0;
+          return {
+            name: v.name,
+            variantSku: v.variantSku || null,
+            variantBarcode: v.variantBarcode || null,
+            attribute1Name: v.attribute1Name || null,
+            attribute1Value: v.attribute1Value || null,
+            attribute2Name: v.attribute2Name || null,
+            attribute2Value: v.attribute2Value || null,
+            attribute3Name: v.attribute3Name || null,
+            attribute3Value: v.attribute3Value || null,
+            priceAdjustment: adjustment,
+            stockQuantity: parseInt(v.stockQuantity) || 0,
+            active: v.active !== false,
+          };
+        }) : null,
       };
       if (editing) { await productService.updateProduct(editing.id, payload); }
       else { await productService.createProduct(businessId, payload); }
@@ -180,8 +185,9 @@ const ProductsPage = () => {
   const handleEdit = (p) => {
     setEditing(p);
     setForm({ name: p.name || '', sku: p.sku || '', barcode: p.barcode || '', salePrice: p.salePrice || '', costPrice: p.costPrice || '', categoryId: p.categoryId || '', productType: p.productType || 'SIMPLE', taxable: p.taxable ?? true, taxRate: p.taxRate || '19', description: p.description || '', brand: p.brand || '', model: p.model || '', color: p.color || '', material: p.material || '', gender: p.gender || '', season: p.season || '', saleUnitOfMeasure: p.saleUnitOfMeasure || '', conversionFactor: p.conversionFactor || '', sanitaryRegistration: p.sanitaryRegistration || '', warrantyDays: p.warrantyDays || '' });
-    // Load existing variants
+    // Load existing variants - convert priceAdjustment to absolute price
     if (p.variants && p.variants.length > 0) {
+      const basePrice = parseFloat(p.salePrice) || 0;
       setVariants(p.variants.map(v => ({
         name: v.name || '',
         variantSku: v.variantSku || '',
@@ -192,7 +198,7 @@ const ProductsPage = () => {
         attribute2Value: v.attribute2Value || '',
         attribute3Name: v.attribute3Name || '',
         attribute3Value: v.attribute3Value || '',
-        priceAdjustment: v.priceAdjustment || 0,
+        variantPrice: basePrice + (parseFloat(v.priceAdjustment) || 0),
         stockQuantity: v.stockQuantity || 0,
         active: v.active !== false,
       })));
@@ -467,16 +473,16 @@ const ProductsPage = () => {
                   {/* Existing variants list */}
                   {variants.length > 0 && (
                     <div className="space-y-2">
-                      <div className="grid grid-cols-[1fr_1fr_80px_32px] gap-2 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1">
-                        <span>Talla</span><span>Color</span><span>+/- Precio</span><span></span>
+                      <div className="grid grid-cols-[1fr_1fr_100px_32px] gap-2 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1">
+                        <span>Talla</span><span>Color</span><span>Precio Venta</span><span></span>
                       </div>
                       {variants.map((v, idx) => (
-                        <div key={idx} className="grid grid-cols-[1fr_1fr_80px_32px] gap-2 items-center bg-white dark:bg-white/5 rounded-xl p-2 border border-slate-200 dark:border-white/10">
+                        <div key={idx} className="grid grid-cols-[1fr_1fr_100px_32px] gap-2 items-center bg-white dark:bg-white/5 rounded-xl p-2 border border-slate-200 dark:border-white/10">
                           <input value={v.attribute1Value} onChange={(e) => updateVariant(idx, 'attribute1Value', e.target.value)} placeholder="Talla"
                             className="bg-transparent text-sm text-slate-800 dark:text-white outline-none px-2 py-1 rounded-lg border border-transparent focus:border-primary-500" />
                           <input value={v.attribute2Value} onChange={(e) => updateVariant(idx, 'attribute2Value', e.target.value)} placeholder="Color"
                             className="bg-transparent text-sm text-slate-800 dark:text-white outline-none px-2 py-1 rounded-lg border border-transparent focus:border-primary-500" />
-                          <input type="number" value={v.priceAdjustment} onChange={(e) => updateVariant(idx, 'priceAdjustment', e.target.value)} placeholder="0"
+                          <input type="number" value={v.variantPrice} onChange={(e) => updateVariant(idx, 'variantPrice', e.target.value)} placeholder={form.salePrice || '0'}
                             className="bg-transparent text-sm text-slate-800 dark:text-white outline-none px-2 py-1 rounded-lg border border-transparent focus:border-primary-500 text-center" />
                           <button type="button" onClick={() => removeVariant(idx)} className="p-1 text-red-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all">
                             <X size={14} />
@@ -484,14 +490,14 @@ const ProductsPage = () => {
                         </div>
                       ))}
                       <p className="text-[10px] text-slate-500 dark:text-slate-400 px-1">
-                        +/- Precio: ajuste sobre el precio base. Ej: talla grande +5000
+                        Deja vacío para usar el precio base del producto
                       </p>
                     </div>
                   )}
 
                   {/* Manual add single variant */}
                   {!showVariantBuilder && (
-                    <button type="button" onClick={() => setVariants([...variants, { name: '', attribute1Name: 'Talla', attribute1Value: '', attribute2Name: 'Color', attribute2Value: '', attribute3Name: '', attribute3Value: '', priceAdjustment: 0, stockQuantity: 0, variantSku: '', variantBarcode: '', active: true }])}
+                    <button type="button" onClick={() => setVariants([...variants, { name: '', attribute1Name: 'Talla', attribute1Value: '', attribute2Name: 'Color', attribute2Value: '', attribute3Name: '', attribute3Value: '', variantPrice: '', stockQuantity: 0, variantSku: '', variantBarcode: '', active: true }])}
                       className="text-xs text-primary-500 hover:text-primary-400 font-semibold flex items-center gap-1">
                       <Plus size={14} /> Agregar variante manual
                     </button>

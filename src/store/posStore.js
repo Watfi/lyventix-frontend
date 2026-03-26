@@ -87,16 +87,14 @@ const usePOSStore = create((set, get) => ({
           for (const v of p.variants) {
             if (v.active === false) continue;
             const variantName = [v.attribute1Value, v.attribute2Value, v.attribute3Value].filter(Boolean).join(' / ');
+            const finalPrice = Number(p.salePrice) + (Number(v.priceAdjustment) || 0);
             products.push({
               id: p.id,
               variantId: v.id,
-              // Unique key for cart dedup
               cartKey: `${p.id}_${v.id}`,
               name: `${p.name} — ${variantName}`,
               sku: v.variantSku || p.sku,
-              salePrice: v.priceAdjustment && Number(v.priceAdjustment) !== 0
-                ? Number(p.salePrice) + Number(v.priceAdjustment)
-                : p.salePrice,
+              salePrice: finalPrice,
               taxRate: p.taxRate,
               taxable: p.taxable,
               mainImageUrl: v.imageUrl || p.mainImageUrl,
