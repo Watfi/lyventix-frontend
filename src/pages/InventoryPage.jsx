@@ -28,7 +28,7 @@ const InventoryPage = () => {
   // Entry/Exit modal
   const [showModal, setShowModal] = useState(false);
   const [movementType, setMovementType] = useState('entry');
-  const [form, setForm] = useState({ productId: '', quantity: '', unitCost: '', reason: 'PURCHASE', reference: '', notes: '' });
+  const [form, setForm] = useState({ productId: '', variantId: '', quantity: '', unitCost: '', reason: 'PURCHASE', reference: '', notes: '' });
   const [productSearch, setProductSearch] = useState('');
   const [productResults, setProductResults] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -118,14 +118,14 @@ const InventoryPage = () => {
 
   const selectProduct = (product) => {
     setSelectedProduct(product);
-    setForm({ ...form, productId: product.id });
+    setForm({ ...form, productId: product.id, variantId: '' });
     setProductSearch(product.name);
     setShowProductDropdown(false);
   };
 
   const openMovementModal = (type) => {
     setMovementType(type);
-    setForm({ productId: '', quantity: '', unitCost: '', reason: type === 'entry' ? 'PURCHASE' : 'SALE', reference: '', notes: '' });
+    setForm({ productId: '', variantId: '', quantity: '', unitCost: '', reason: type === 'entry' ? 'PURCHASE' : 'SALE', reference: '', notes: '' });
     setSelectedProduct(null); setProductSearch(''); setProductResults([]);
     setShowModal(true);
   };
@@ -136,6 +136,7 @@ const InventoryPage = () => {
     try {
       const payload = {
         productId: form.productId,
+        variantId: form.variantId || null,
         quantity: parseInt(form.quantity) || 1,
         unitCost: parseFloat(form.unitCost) || 0,
         reason: form.reason,
@@ -510,12 +511,28 @@ const InventoryPage = () => {
               </div>
 
               {selectedProduct && (
-                <div className="bg-primary-600/10 border border-primary-500/20 rounded-xl p-3 flex items-center gap-3">
-                  <Package className="text-primary-400" size={20} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-slate-800 dark:text-white font-medium text-sm truncate">{selectedProduct.name}</p>
-                    <p className="text-slate-500 dark:text-slate-400 text-xs">SKU: {selectedProduct.sku || '-'}</p>
+                <div className="space-y-3">
+                  <div className="bg-primary-600/10 border border-primary-500/20 rounded-xl p-3 flex items-center gap-3">
+                    <Package className="text-primary-400" size={20} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-slate-800 dark:text-white font-medium text-sm truncate">{selectedProduct.name}</p>
+                      <p className="text-slate-500 dark:text-slate-400 text-xs">SKU: {selectedProduct.sku || '-'}</p>
+                    </div>
                   </div>
+                  {selectedProduct.hasVariants && selectedProduct.variants && selectedProduct.variants.length > 0 && (
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Variante *</label>
+                      <select value={form.variantId} onChange={(e) => setForm({ ...form, variantId: e.target.value })}
+                        className="w-full bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-800 dark:text-white outline-none focus:border-primary-500 transition-colors [&>option]:text-slate-800 dark:[&>option]:text-white" required>
+                        <option value="">Seleccionar variante...</option>
+                        {selectedProduct.variants.map(v => (
+                          <option key={v.id} value={v.id}>
+                            {[v.attribute1Value, v.attribute2Value].filter(Boolean).join(' / ') || v.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -543,7 +560,7 @@ const InventoryPage = () => {
 
               <div className="flex gap-3 pt-4">
                 <Button type="button" variant="outline" onClick={() => setShowModal(false)} className="flex-1">Cancelar</Button>
-                <Button type="submit" className="flex-1" disabled={!selectedProduct}>
+                <Button type="submit" className="flex-1" disabled={!selectedProduct || (selectedProduct?.hasVariants && selectedProduct?.variants?.length > 0 && !form.variantId)}>
                   {movementType === 'entry' ? '📥 Registrar Entrada' : '📤 Registrar Salida'}
                 </Button>
               </div>
