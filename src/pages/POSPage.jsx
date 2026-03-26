@@ -100,7 +100,7 @@ const POSPage = () => {
           {products.map((product) => (
             <motion.div
               layout
-              key={product.id}
+              key={product.cartKey || product.id}
               whileHover={{ y: -4 }}
               onClick={() => addToCart(product)}
               className="glass-card p-3 md:p-5 rounded-2xl md:rounded-3xl cursor-pointer flex flex-col justify-between"
@@ -154,7 +154,7 @@ const POSPage = () => {
           <AnimatePresence initial={false}>
             {cart.map((item) => (
               <motion.div
-                key={item.id}
+                key={item.cartKey || item.id}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, scale: 0.9 }}
@@ -167,14 +167,14 @@ const POSPage = () => {
 
                 <div className="flex items-center gap-2 bg-slate-100 dark:bg-white/5 rounded-xl p-1 border border-slate-200 dark:border-white/5">
                   <button
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                    onClick={() => updateQuantity(item.cartKey || item.id, item.quantity - 1)}
                     className="p-1 hover:bg-white dark:hover:bg-white/10 rounded-lg text-slate-400 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                   >
                     <Minus size={14} />
                   </button>
                   <span className="w-8 text-center text-sm font-bold text-slate-800 dark:text-white">{item.quantity}</span>
                   <button
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    onClick={() => updateQuantity(item.cartKey || item.id, item.quantity + 1)}
                     className="p-1 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-colors"
                   >
                     <Plus size={14} />
@@ -186,7 +186,7 @@ const POSPage = () => {
                 </div>
 
                 <button
-                  onClick={() => removeFromCart(item.id)}
+                  onClick={() => removeFromCart(item.cartKey || item.id)}
                   className="p-1.5 md:p-2 text-slate-600 hover:text-red-400 transition-colors md:opacity-0 md:group-hover:opacity-100"
                 >
                   <Trash2 size={16} />

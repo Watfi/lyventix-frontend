@@ -71,44 +71,79 @@ const usePOSStore = create((set, get) => ({
     });
   },
 
-  // Search products from backend
+  // Search products from backend - flatten variants into individual items
   searchProducts: async (query, businessId) => {
     if (!businessId) return;
     set({ loading: true, error: null });
     try {
       const response = await productService.getProducts(businessId, { search: query, size: 20 });
       const data = response.data;
-      const products = data.content || data || [];
+      const rawProducts = data.content || data || [];
+
+      // Flatten: products with variants become multiple entries
+      const products = [];
+      for (const p of rawProducts) {
+        if (p.hasVariants && p.variants && p.variants.length > 0) {
+          for (const v of p.variants) {
+            if (v.active === false) continue;
+            const variantName = [v.attribute1Value, v.attribute2Value, v.attribute3Value].filter(Boolean).join(' / ');
+            products.push({
+              id: p.id,
+              variantId: v.id,
+              // Unique key for cart dedup
+              cartKey: `${p.id}_${v.id}`,
+              name: `${p.name} — ${variantName}`,
+              sku: v.variantSku || p.sku,
+              salePrice: v.priceAdjustment && Number(v.priceAdjustment) !== 0
+                ? Number(p.salePrice) + Number(v.priceAdjustment)
+                : p.salePrice,
+              taxRate: p.taxRate,
+              taxable: p.taxable,
+              mainImageUrl: v.imageUrl || p.mainImageUrl,
+              categoryName: p.categoryName,
+              productType: p.productType,
+            });
+          }
+        } else {
+          products.push({
+            ...p,
+            cartKey: p.id,
+            variantId: null,
+          });
+        }
+      }
+
       set({ products, loading: false });
     } catch (error) {
       set({ error: 'Error al buscar productos', loading: false });
     }
   },
 
-  // Cart Management
+  // Cart Management - uses cartKey for dedup
   addToCart: (product) => {
     const { cart } = get();
-    const existingItem = cart.find(item => item.id === product.id);
+    const key = product.cartKey || product.id;
+    const existingItem = cart.find(item => (item.cartKey || item.id) === key);
     if (existingItem) {
-      set({ cart: cart.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item) });
+      set({ cart: cart.map(item => (item.cartKey || item.id) === key ? { ...item, quantity: item.quantity + 1 } : item) });
     } else {
       set({ cart: [...cart, { ...product, quantity: 1 }] });
     }
   },
 
-  removeFromCart: (productId) => {
-    set({ cart: get().cart.filter(item => item.id !== productId) });
+  removeFromCart: (cartKey) => {
+    set({ cart: get().cart.filter(item => (item.cartKey || item.id) !== cartKey) });
   },
 
-  updateQuantity: (productId, quantity) => {
-    if (quantity <= 0) { get().removeFromCart(productId); return; }
-    set({ cart: get().cart.map(item => item.id === productId ? { ...item, quantity } : item) });
+  updateQuantity: (cartKey, quantity) => {
+    if (quantity <= 0) { get().removeFromCart(cartKey); return; }
+    set({ cart: get().cart.map(item => (item.cartKey || item.id) === cartKey ? { ...item, quantity } : item) });
   },
 
-  updateItemOverride: (productId, overrides) => {
+  updateItemOverride: (cartKey, overrides) => {
     set({
       cart: get().cart.map(item => {
-        if (item.id !== productId) return item;
+        if ((item.cartKey || item.id) !== cartKey) return item;
         return {
           ...item,
           ...(overrides.customName !== undefined && { customName: overrides.customName }),
@@ -152,7 +187,13 @@ const usePOSStore = create((set, get) => ({
         tableId: (selectedTable && !selectedTable.isDelivery) ? selectedTable.id : null,
         status,
         paymentMethod: saleData.paymentMethod || 'CASH',
-        items: cart.map(item => ({ productId: item.id, quantity: item.quantity, unitPrice: item.salePrice, discount: 0 })),
+        items: cart.map(item => ({
+          productId: item.id,
+          productVariantId: item.variantId || null,
+          quantity: item.quantity,
+          unitPrice: item.salePrice,
+          discount: 0,
+        })),
         discountAmount: saleData.discountAmount || 0,
         amountPaid: status === 'COMPLETED' ? total : 0,
         notes: saleData.notes || null,
@@ -168,7 +209,6 @@ const usePOSStore = create((set, get) => ({
       // Update table status
       if (selectedTable && status === 'PENDING') {
         tableService.updateStatus(selectedTable.id, 'OCCUPIED').catch(() => {});
-        // Save the saleId for this table so we can update it later
         set({
           tableOrders: {
             ...get().tableOrders,
@@ -177,7 +217,6 @@ const usePOSStore = create((set, get) => ({
         });
       } else if (selectedTable && status === 'COMPLETED') {
         tableService.updateStatus(selectedTable.id, 'AVAILABLE').catch(() => {});
-        // Clear table order
         get().clearTableOrder(selectedTable.id);
       }
 
