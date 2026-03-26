@@ -81,7 +81,9 @@ const ReportsPage = () => {
           customerService.getCustomers(businessId, { size: 1000 }),
         ]);
         setDashboard(dashRes.data);
-        setSales(salesRes.data?.content || salesRes.data || []);
+        const salesData = salesRes.data?.content || salesRes.data || [];
+        console.log('SALES RAW:', salesData.length, salesData[0]);
+        setSales(salesData);
         setCustomers(custRes.data?.content || custRes.data || []);
       } catch (err) {
         setError(err.response?.data?.message || 'Error al cargar reportes');
