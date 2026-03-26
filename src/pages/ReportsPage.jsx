@@ -204,17 +204,17 @@ const ReportsPage = () => {
       </div>
 
       {/* Date Range Filter */}
-      <div className="glass-panel p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-3 flex-wrap">
+      <div className="glass-panel p-3 sm:p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 flex-wrap">
         <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-          <Filter size={16} className="text-primary-500" />
-          <span className="text-sm font-semibold">Rango:</span>
+          <Filter size={14} className="text-primary-500" />
+          <span className="text-xs sm:text-sm font-semibold">Rango:</span>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-800 dark:text-white" />
-          <span className="text-slate-400 text-sm">a</span>
-          <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-800 dark:text-white" />
+        <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+          <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm text-slate-800 dark:text-white flex-1 sm:flex-none min-w-0" />
+          <span className="text-slate-400 text-xs">a</span>
+          <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 sm:px-3 sm:py-1.5 text-xs sm:text-sm text-slate-800 dark:text-white flex-1 sm:flex-none min-w-0" />
         </div>
-        <div className="flex items-center gap-2 sm:ml-auto text-sm text-slate-500">
+        <div className="flex items-center gap-2 sm:ml-auto text-xs sm:text-sm text-slate-500">
           <span className="font-medium">{filteredSales.length} ventas</span>
           <span>|</span>
           <span className="font-bold text-primary-500">{fmt(totalFiltered)}</span>
@@ -222,20 +222,20 @@ const ReportsPage = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
         {[
           { label: 'Ventas Periodo', value: fmt(totalFiltered), sub: `${filteredSales.length} ventas`, icon: BarChart3, color: 'text-primary-400', bg: 'bg-primary-500/10' },
           { label: 'Ticket Promedio', value: fmt(avgTicket), sub: 'por venta', icon: TrendingUp, color: 'text-purple-400', bg: 'bg-purple-500/10' },
           { label: 'Productos', value: String(dashboard?.productsCount || 0), sub: 'en catalogo', icon: Package, color: 'text-blue-400', bg: 'bg-blue-500/10' },
           { label: 'Stock Bajo', value: String(dashboard?.lowStockProductsCount || 0), sub: 'alertas', icon: AlertCircle, color: 'text-orange-400', bg: 'bg-orange-500/10' },
         ].map((card, i) => (
-          <motion.div key={i} whileHover={{ y: -2 }} className="glass-panel p-4 rounded-2xl">
-            <div className="flex items-center gap-2 mb-2">
-              <div className={`p-1.5 rounded-lg ${card.bg}`}><card.icon size={16} className={card.color} /></div>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{card.label}</span>
+          <motion.div key={i} whileHover={{ y: -2 }} className="glass-panel p-3 sm:p-4 rounded-xl sm:rounded-2xl">
+            <div className="flex items-center gap-1.5 mb-1 sm:mb-2">
+              <div className={`p-1 sm:p-1.5 rounded-lg ${card.bg}`}><card.icon size={14} className={card.color} /></div>
+              <span className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium truncate">{card.label}</span>
             </div>
-            <p className="text-xl font-bold text-slate-800 dark:text-white">{card.value}</p>
-            <p className="text-xs text-emerald-500 font-semibold mt-1">{card.sub}</p>
+            <p className="text-base sm:text-xl font-bold text-slate-800 dark:text-white">{card.value}</p>
+            <p className="text-[10px] sm:text-xs text-emerald-500 font-semibold mt-0.5">{card.sub}</p>
           </motion.div>
         ))}
       </div>
@@ -253,80 +253,110 @@ const ReportsPage = () => {
 
       {/* === VENTAS TAB === */}
       {activeTab === 'ventas' && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="glass-panel p-6 rounded-3xl">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2"><TrendingUp size={18} className="text-primary-500" /> Tendencia de Ventas</h3>
-                <button onClick={handleExportDailySales} className="text-xs text-primary-500 hover:text-primary-400 flex items-center gap-1">{exporting.daily ? <CheckCircle2 size={12} /> : <Download size={12} />} PDF</button>
+        <div className="space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+            <div className="glass-panel p-3 sm:p-6 rounded-2xl sm:rounded-3xl">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 text-sm sm:text-base"><TrendingUp size={16} className="text-primary-500" /> Tendencia de Ventas</h3>
+                <button onClick={handleExportDailySales} className="text-[10px] sm:text-xs text-primary-500 hover:text-primary-400 flex items-center gap-1">{exporting.daily ? <CheckCircle2 size={12} /> : <Download size={12} />} PDF</button>
               </div>
               {dailySalesData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={280}>
-                  <AreaChart data={dailySalesData}>
+                <ResponsiveContainer width="100%" height={200}>
+                  <AreaChart data={dailySalesData} margin={{ left: -15, right: 5, top: 5, bottom: 0 }}>
                     <defs><linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} /><stop offset="95%" stopColor="#6366f1" stopOpacity={0} /></linearGradient></defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="#94a3b8" />
-                    <YAxis tick={{ fontSize: 11 }} stroke="#94a3b8" tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v} />
+                    <XAxis dataKey="label" tick={{ fontSize: 9 }} stroke="#94a3b8" interval="preserveStartEnd" />
+                    <YAxis tick={{ fontSize: 9 }} stroke="#94a3b8" tickFormatter={v => v >= 1000 ? `${(v/1000).toFixed(0)}k` : v} width={35} />
                     <Tooltip content={<CustomTooltip />} />
                     <Area type="monotone" dataKey="total" name="Total" stroke="#6366f1" fillOpacity={1} fill="url(#colorTotal)" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
-              ) : <p className="text-slate-500 text-center py-16 text-sm">No hay datos en este rango</p>}
+              ) : <p className="text-slate-500 text-center py-10 text-sm">No hay datos en este rango</p>}
             </div>
 
-            <div className="glass-panel p-6 rounded-3xl">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2"><Wallet size={18} className="text-purple-500" /> Por Metodo de Pago</h3>
-                <button onClick={handleExportSales} className="text-xs text-primary-500 hover:text-primary-400 flex items-center gap-1">{exporting.sales ? <CheckCircle2 size={12} /> : <Download size={12} />} PDF</button>
+            <div className="glass-panel p-3 sm:p-6 rounded-2xl sm:rounded-3xl">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 text-sm sm:text-base"><Wallet size={16} className="text-purple-500" /> Por Metodo de Pago</h3>
+                <button onClick={handleExportSales} className="text-[10px] sm:text-xs text-primary-500 hover:text-primary-400 flex items-center gap-1">{exporting.sales ? <CheckCircle2 size={12} /> : <Download size={12} />} PDF</button>
               </div>
               {paymentMethodData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={280}>
+                <ResponsiveContainer width="100%" height={200}>
                   <PieChart>
-                    <Pie data={paymentMethodData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} innerRadius={50} paddingAngle={3} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
+                    <Pie data={paymentMethodData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} innerRadius={35} paddingAngle={3}>
                       {paymentMethodData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />
-                    <Legend wrapperStyle={{ fontSize: 12 }} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
                   </PieChart>
                 </ResponsiveContainer>
-              ) : <p className="text-slate-500 text-center py-16 text-sm">No hay datos</p>}
+              ) : <p className="text-slate-500 text-center py-10 text-sm">No hay datos</p>}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="glass-panel p-6 rounded-3xl">
-              <h3 className="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2"><FileText size={18} className="text-emerald-500" /> Por Estado</h3>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+            <div className="glass-panel p-3 sm:p-6 rounded-2xl sm:rounded-3xl">
+              <h3 className="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-1.5 text-sm sm:text-base"><FileText size={16} className="text-emerald-500" /> Por Estado</h3>
               {statusData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={200}>
                   <PieChart>
-                    <Pie data={statusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} innerRadius={40} paddingAngle={3} label={({ name, value }) => `${name}: ${value}`} labelLine={false}>
+                    <Pie data={statusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={65} innerRadius={30} paddingAngle={3}>
                       {statusData.map((_, i) => <Cell key={i} fill={['#10b981', '#ef4444', '#f59e0b'][i] || COLORS[i]} />)}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />
-                    <Legend wrapperStyle={{ fontSize: 12 }} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
                   </PieChart>
                 </ResponsiveContainer>
-              ) : <p className="text-slate-500 text-center py-16 text-sm">No hay datos</p>}
+              ) : <p className="text-slate-500 text-center py-10 text-sm">No hay datos</p>}
             </div>
 
-            <div className="glass-panel p-6 rounded-3xl">
-              <h3 className="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2"><Calendar size={18} className="text-blue-500" /> Ventas por Dia</h3>
+            <div className="glass-panel p-3 sm:p-6 rounded-2xl sm:rounded-3xl">
+              <h3 className="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-1.5 text-sm sm:text-base"><Calendar size={16} className="text-blue-500" /> Ventas por Dia</h3>
               {dailySalesData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={250}>
-                  <BarChart data={dailySalesData}>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={dailySalesData} margin={{ left: -15, right: 5, top: 5, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis dataKey="label" tick={{ fontSize: 10 }} stroke="#94a3b8" />
-                    <YAxis tick={{ fontSize: 11 }} stroke="#94a3b8" />
+                    <XAxis dataKey="label" tick={{ fontSize: 9 }} stroke="#94a3b8" interval="preserveStartEnd" />
+                    <YAxis tick={{ fontSize: 9 }} stroke="#94a3b8" width={30} />
                     <Tooltip content={<CustomTooltip />} />
                     <Bar dataKey="count" name="Ventas" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
-              ) : <p className="text-slate-500 text-center py-16 text-sm">No hay datos</p>}
+              ) : <p className="text-slate-500 text-center py-10 text-sm">No hay datos</p>}
             </div>
           </div>
 
-          {/* Sales Table */}
-          <div className="glass-panel rounded-3xl overflow-hidden">
+          {/* Sales - Mobile cards */}
+          <div className="sm:hidden space-y-2">
+            <div className="flex items-center justify-between px-1">
+              <h4 className="font-bold text-slate-800 dark:text-white text-sm">Ventas del Periodo</h4>
+              <button onClick={handleExportSales} className="flex items-center gap-1 px-2 py-1 rounded-lg bg-primary-500/10 text-primary-500 text-[10px] font-medium"><Download size={10} /> PDF</button>
+            </div>
+            {filteredSales.slice(0, 15).map(s => {
+              const d = parseDate(s.saleDate || s.createdAt);
+              return (
+                <div key={s.id} className="glass-panel p-3 rounded-xl">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[10px] font-mono text-slate-500">{s.invoiceNumber || '-'}</span>
+                    <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-bold ${s.paymentMethod === 'CASH' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600' : s.paymentMethod === 'CARD' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600' : 'bg-purple-100 dark:bg-purple-900/30 text-purple-600'}`}>
+                      {s.paymentMethod === 'CASH' ? 'Efectivo' : s.paymentMethod === 'CARD' ? 'Tarjeta' : s.paymentMethod || '-'}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-slate-800 dark:text-white">{s.customerName || 'Sin cliente'}</p>
+                      <p className="text-[10px] text-slate-500">{d ? d.toLocaleDateString('es-CO') : '-'}</p>
+                    </div>
+                    <p className="text-sm font-bold text-slate-800 dark:text-white">{fmt(s.total)}</p>
+                  </div>
+                </div>
+              );
+            })}
+            {filteredSales.length === 0 && <p className="text-slate-500 text-center py-6 text-xs">No hay ventas en este rango</p>}
+            {filteredSales.length > 15 && <p className="text-slate-400 text-center py-2 text-[10px]">Mostrando 15 de {filteredSales.length}. Exporta PDF para ver todas.</p>}
+          </div>
+
+          {/* Sales - Desktop table */}
+          <div className="glass-panel rounded-3xl overflow-hidden hidden sm:block">
             <div className="p-5 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
               <h4 className="font-bold text-slate-800 dark:text-white text-sm">Ventas del Periodo</h4>
               <button onClick={handleExportSales} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-500/10 text-primary-500 text-xs font-medium hover:bg-primary-500/20">
@@ -370,39 +400,39 @@ const ReportsPage = () => {
 
       {/* === PRODUCTOS TAB === */}
       {activeTab === 'productos' && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="glass-panel p-6 rounded-3xl">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-slate-800 dark:text-white">Top Productos (Cantidad)</h3>
-                <button onClick={handleExportTopProducts} className="text-xs text-primary-500 hover:text-primary-400 flex items-center gap-1">{exporting.top ? <CheckCircle2 size={12} /> : <Download size={12} />} PDF</button>
+        <div className="space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+            <div className="glass-panel p-3 sm:p-6 rounded-2xl sm:rounded-3xl">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-bold text-slate-800 dark:text-white text-sm sm:text-base">Top Productos</h3>
+                <button onClick={handleExportTopProducts} className="text-[10px] sm:text-xs text-primary-500 hover:text-primary-400 flex items-center gap-1">{exporting.top ? <CheckCircle2 size={12} /> : <Download size={12} />} PDF</button>
               </div>
               {topProductsData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={topProductsData} layout="vertical">
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={topProductsData} layout="vertical" margin={{ left: 0, right: 5, top: 5, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis type="number" tick={{ fontSize: 11 }} stroke="#94a3b8" />
-                    <YAxis dataKey="name" type="category" tick={{ fontSize: 10 }} stroke="#94a3b8" width={120} />
+                    <XAxis type="number" tick={{ fontSize: 9 }} stroke="#94a3b8" />
+                    <YAxis dataKey="name" type="category" tick={{ fontSize: 9 }} stroke="#94a3b8" width={90} />
                     <Tooltip content={<CustomTooltip />} />
                     <Bar dataKey="cantidad" name="Cantidad" fill="#6366f1" radius={[0, 4, 4, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
-              ) : <p className="text-slate-500 text-center py-16 text-sm">No hay datos</p>}
+              ) : <p className="text-slate-500 text-center py-10 text-sm">No hay datos</p>}
             </div>
 
-            <div className="glass-panel p-6 rounded-3xl">
-              <h3 className="font-bold text-slate-800 dark:text-white mb-4">Ingresos por Producto</h3>
+            <div className="glass-panel p-3 sm:p-6 rounded-2xl sm:rounded-3xl">
+              <h3 className="font-bold text-slate-800 dark:text-white mb-3 text-sm sm:text-base">Ingresos por Producto</h3>
               {topProductsData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={300}>
+                <ResponsiveContainer width="100%" height={220}>
                   <PieChart>
-                    <Pie data={topProductsData} dataKey="ingresos" nameKey="name" cx="50%" cy="50%" outerRadius={100} innerRadius={45} paddingAngle={2} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
+                    <Pie data={topProductsData} dataKey="ingresos" nameKey="name" cx="50%" cy="50%" outerRadius={65} innerRadius={30} paddingAngle={2}>
                       {topProductsData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />
-                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                    <Legend wrapperStyle={{ fontSize: 10 }} />
                   </PieChart>
                 </ResponsiveContainer>
-              ) : <p className="text-slate-500 text-center py-16 text-sm">No hay datos</p>}
+              ) : <p className="text-slate-500 text-center py-10 text-sm">No hay datos</p>}
             </div>
           </div>
 
@@ -439,7 +469,7 @@ const ReportsPage = () => {
 
       {/* === INVENTARIO TAB === */}
       {activeTab === 'inventario' && (
-        <div className="glass-panel p-6 rounded-3xl">
+        <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl">
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-bold text-slate-800 dark:text-white text-lg">Reporte de Inventario</h3>
             <button onClick={handleExportInventory} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary-500/10 text-primary-500 text-sm font-medium hover:bg-primary-500/20">
@@ -466,8 +496,8 @@ const ReportsPage = () => {
 
       {/* === CLIENTES TAB === */}
       {activeTab === 'clientes' && (
-        <div className="space-y-6">
-          <div className="glass-panel p-6 rounded-3xl">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-slate-800 dark:text-white text-lg">Reporte de Clientes</h3>
               <button onClick={handleExportCustomers} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary-500/10 text-primary-500 text-sm font-medium hover:bg-primary-500/20">
@@ -507,7 +537,7 @@ const ReportsPage = () => {
 
       {/* === CAJA TAB === */}
       {activeTab === 'caja' && (
-        <div className="glass-panel p-6 rounded-3xl">
+        <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl">
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-bold text-slate-800 dark:text-white text-lg">Reporte de Sesiones de Caja</h3>
             <button onClick={handleExportCash} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary-500/10 text-primary-500 text-sm font-medium hover:bg-primary-500/20">
