@@ -30,6 +30,7 @@ const POSPage = () => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [loadingCustomers, setLoadingCustomers] = useState(false);
   const [saleConfirmation, setSaleConfirmation] = useState(null); // holds completed sale data
+  const [saleError, setSaleError] = useState(null);
   const { businessId, user } = useAuthStore();
   const {
     products,
@@ -221,15 +222,19 @@ const POSPage = () => {
                 <>
                   <Button className="py-3 md:py-4 flex-1 bg-amber-500 hover:bg-amber-600 border-amber-500 shadow-amber-900/10 text-white" onClick={async () => {
                     const snap = [...cart]; const tots = { subtotal, tax, total };
+                    setSaleError(null);
                     const result = await processSale(businessId, { paymentMethod: 'CASH', status: 'PENDING' });
                     if (result?.success) setSaleConfirmation({ ...result.data, _status: 'PENDING', _cart: snap, _totals: tots });
+                    else { const m = result?.message || 'No se pudo realizar la venta. Verifique el stock.'; setSaleError(m); window.alert(m); }
                   }}>
                     <span className="font-bold uppercase tracking-wider text-xs">Comanda</span>
                   </Button>
                   <Button className="py-3 md:py-4 flex-1" onClick={async () => {
                     const snap = [...cart]; const tots = { subtotal, tax, total };
+                    setSaleError(null);
                     const result = await processSale(businessId, { paymentMethod: 'CASH', status: 'COMPLETED' });
                     if (result?.success) setSaleConfirmation({ ...result.data, _status: 'COMPLETED', _cart: snap, _totals: tots });
+                    else { const m = result?.message || 'No se pudo realizar la venta. Verifique el stock.'; setSaleError(m); window.alert(m); }
                   }}>
                     <span className="font-bold uppercase tracking-wider text-xs">Cobrar</span>
                   </Button>
@@ -246,6 +251,7 @@ const POSPage = () => {
                   <Button className="py-3 md:py-4 flex-1" onClick={async () => {
                     const cartSnapshot = [...cart];
                     const totalsSnapshot = { subtotal, tax, total };
+                    setSaleError(null);
                     const result = await processSale(businessId, { paymentMethod: 'CASH', status: 'COMPLETED', customerId: selectedCustomer?.id || null });
                     if (result?.success) {
                       setSaleConfirmation({
@@ -256,6 +262,10 @@ const POSPage = () => {
                         _customer: selectedCustomer,
                       });
                       setSelectedCustomer(null);
+                    } else {
+                      const errorMsg = result?.message || 'No se pudo realizar la venta. Verifique el stock de los productos.';
+                      setSaleError(errorMsg);
+                      window.alert(errorMsg);
                     }
                   }}>
                     <CreditCard size={18} />
@@ -474,6 +484,14 @@ const POSPage = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Fixed toast for sale errors */}
+      {saleError && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-lg w-[90%] p-4 bg-red-600 text-white rounded-xl shadow-2xl flex items-center justify-between animate-bounce-in">
+          <span className="text-sm font-medium">{saleError}</span>
+          <button onClick={() => setSaleError(null)} className="ml-3 text-white/80 hover:text-white font-bold text-lg">&times;</button>
+        </div>
+      )}
     </div>
   );
 };
