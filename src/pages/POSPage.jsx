@@ -225,7 +225,7 @@ const POSPage = () => {
                     setSaleError(null);
                     const result = await processSale(businessId, { paymentMethod: 'CASH', status: 'PENDING' });
                     if (result?.success) setSaleConfirmation({ ...result.data, _status: 'PENDING', _cart: snap, _totals: tots });
-                    else { const m = result?.message || 'No se pudo realizar la venta. Verifique el stock.'; setSaleError(m); window.alert(m); }
+                    else { const m = result?.message || 'No se pudo realizar la venta. Verifique el stock.'; setSaleError(m); }
                   }}>
                     <span className="font-bold uppercase tracking-wider text-xs">Comanda</span>
                   </Button>
@@ -234,7 +234,7 @@ const POSPage = () => {
                     setSaleError(null);
                     const result = await processSale(businessId, { paymentMethod: 'CASH', status: 'COMPLETED' });
                     if (result?.success) setSaleConfirmation({ ...result.data, _status: 'COMPLETED', _cart: snap, _totals: tots });
-                    else { const m = result?.message || 'No se pudo realizar la venta. Verifique el stock.'; setSaleError(m); window.alert(m); }
+                    else { const m = result?.message || 'No se pudo realizar la venta. Verifique el stock.'; setSaleError(m); }
                   }}>
                     <span className="font-bold uppercase tracking-wider text-xs">Cobrar</span>
                   </Button>
@@ -265,7 +265,6 @@ const POSPage = () => {
                     } else {
                       const errorMsg = result?.message || 'No se pudo realizar la venta. Verifique el stock de los productos.';
                       setSaleError(errorMsg);
-                      window.alert(errorMsg);
                     }
                   }}>
                     <CreditCard size={18} />
@@ -487,10 +486,23 @@ const POSPage = () => {
 
       {/* Fixed toast for sale errors */}
       {saleError && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-lg w-[90%] p-4 bg-red-600 text-white rounded-xl shadow-2xl flex items-center justify-between animate-bounce-in">
-          <span className="text-sm font-medium">{saleError}</span>
-          <button onClick={() => setSaleError(null)} className="ml-3 text-white/80 hover:text-white font-bold text-lg">&times;</button>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 40 }}
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 max-w-lg w-[90%] p-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl shadow-2xl shadow-red-500/30 flex items-center gap-3 border border-red-400/30 backdrop-blur-sm"
+        >
+          <div className="flex-shrink-0 w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+            <PackageSearch size={20} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-bold uppercase tracking-wider opacity-80">Sin stock</p>
+            <p className="text-sm font-medium truncate">{saleError}</p>
+          </div>
+          <button onClick={() => setSaleError(null)} className="flex-shrink-0 w-8 h-8 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center transition-colors">
+            <X size={16} />
+          </button>
+        </motion.div>
       )}
     </div>
   );

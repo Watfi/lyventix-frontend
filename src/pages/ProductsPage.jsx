@@ -179,7 +179,10 @@ const ProductsPage = () => {
       if (editing) { await productService.updateProduct(editing.id, payload); }
       else { await productService.createProduct(businessId, payload); }
       setShowModal(false); setEditing(null); resetForm(); fetchProducts();
-    } catch (err) { setError(err.response?.data?.message || 'Error al guardar producto'); }
+    } catch (err) {
+      console.error('Error guardando producto:', err.response?.status, err.response?.data, err);
+      setError(err.response?.data?.message || err.message || 'Error al guardar producto');
+    }
   };
 
   const handleEdit = (p) => {

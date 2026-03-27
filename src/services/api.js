@@ -19,14 +19,19 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Interceptor para manejar errores 401
+// Interceptor para manejar errores
+let redirecting = false;
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      // Redirigir al login si es necesario
-      window.location.href = '/login';
+    if (error.response?.status === 401 && !redirecting) {
+      const isLoginPage = window.location.pathname === '/login' || window.location.pathname === '/register';
+      if (!isLoginPage) {
+        redirecting = true;
+        localStorage.removeItem('token');
+        // Small delay to let in-flight requests finish
+        setTimeout(() => { window.location.href = '/login'; }, 500);
+      }
     }
     return Promise.reject(error);
   }

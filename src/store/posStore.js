@@ -221,7 +221,8 @@ const usePOSStore = create((set, get) => ({
       set({ cart: [], selectedTable: null, loading: false, error: null });
       return { success: true, data: response.data };
     } catch (error) {
-      const msg = error.response?.data?.message || 'Error al procesar la venta';
+      const msg = error.response?.data?.message || error.message || 'Error al procesar la venta';
+      console.error('processSale error:', error.response?.status, msg);
       set({ error: msg, loading: false });
       return { success: false, message: msg };
     }
