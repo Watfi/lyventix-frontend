@@ -161,6 +161,7 @@ const ProductsPage = () => {
           const vPrice = parseFloat(v.variantPrice);
           const adjustment = !isNaN(vPrice) && vPrice > 0 ? vPrice - basePrice : 0;
           return {
+            id: v.id || null,
             name: v.name,
             variantSku: v.variantSku || null,
             variantBarcode: v.variantBarcode || null,
@@ -192,6 +193,7 @@ const ProductsPage = () => {
     if (p.variants && p.variants.length > 0) {
       const basePrice = parseFloat(p.salePrice) || 0;
       setVariants(p.variants.map(v => ({
+        id: v.id || null,
         name: v.name || '',
         variantSku: v.variantSku || '',
         variantBarcode: v.variantBarcode || '',

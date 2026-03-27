@@ -81,9 +81,9 @@ const POSPage = () => {
   }, [customerSearch, showCustomerModal, businessId]);
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 md:gap-6 h-auto md:h-[calc(100vh-140px)]">
+    <div className="flex flex-col md:flex-row gap-4 md:gap-6 h-auto md:h-[calc(100vh-140px)] overflow-x-hidden max-w-full">
       {/* Product Selection Area */}
-      <div className="flex-[2] flex flex-col gap-4 md:gap-6 min-h-[40vh] md:min-h-0">
+      <div className="flex-[2] flex flex-col gap-4 md:gap-6 min-h-[40vh] md:min-h-0 min-w-0 overflow-hidden">
         <div className="glass-panel p-3 md:p-4 rounded-2xl md:rounded-3xl flex items-center gap-2 md:gap-4">
           <Input
             className="flex-1"
@@ -104,12 +104,12 @@ const POSPage = () => {
               key={product.cartKey || product.id}
               whileHover={{ y: -4 }}
               onClick={() => addToCart(product)}
-              className="glass-card p-3 md:p-5 rounded-2xl md:rounded-3xl cursor-pointer flex flex-col justify-between"
+              className="glass-card p-3 md:p-5 rounded-2xl md:rounded-3xl cursor-pointer flex flex-col justify-between overflow-hidden min-w-0"
             >
-                <h4 className="text-slate-800 dark:text-white font-bold leading-tight text-sm md:text-base">{product.name}</h4>
-                <p className="text-slate-600 dark:text-slate-500 text-xs md:text-sm mt-1 truncate">SKU: {product.sku || '-'}</p>
+                <h4 className="text-slate-800 dark:text-white font-bold leading-tight text-xs md:text-base line-clamp-2 break-words">{product.name}</h4>
+                <p className="text-slate-600 dark:text-slate-500 text-[10px] md:text-sm mt-1 truncate">SKU: {product.sku || '-'}</p>
               <div className="flex items-center justify-between mt-3 md:mt-6">
-                <span className="text-base md:text-xl font-bold text-slate-800 dark:text-white">${Number(product.salePrice).toLocaleString()}</span>
+                <span className="text-xs md:text-xl font-bold text-slate-800 dark:text-white">${Number(product.salePrice).toLocaleString()}</span>
                 <div className="p-1.5 md:p-2 bg-primary-600 rounded-lg md:rounded-xl text-white shadow-lg shadow-primary-900/10">
                   <Plus size={16} />
                 </div>
@@ -126,7 +126,7 @@ const POSPage = () => {
       </div>
 
       {/* Cart Area */}
-      <div className="flex-1 glass-panel rounded-2xl md:rounded-3xl flex flex-col overflow-hidden min-h-[300px]">
+      <div className="flex-1 glass-panel rounded-2xl md:rounded-3xl flex flex-col overflow-hidden min-h-[300px] min-w-0">
         <div className="p-4 md:p-6 border-b border-white/5 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -497,7 +497,7 @@ const POSPage = () => {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-xs font-bold uppercase tracking-wider opacity-80">Sin stock</p>
-            <p className="text-sm font-medium truncate">{saleError}</p>
+            <p className="text-sm font-medium line-clamp-2 break-words">{saleError}</p>
           </div>
           <button onClick={() => setSaleError(null)} className="flex-shrink-0 w-8 h-8 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center transition-colors">
             <X size={16} />

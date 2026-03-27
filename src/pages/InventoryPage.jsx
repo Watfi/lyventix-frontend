@@ -12,7 +12,7 @@ import branchService from '../services/branchService';
 import productService from '../services/productService';
 
 const InventoryPage = () => {
-  const { businessId } = useAuthStore();
+  const { businessId, user } = useAuthStore();
   const [branches, setBranches] = useState([]);
   const [selectedBranch, setSelectedBranch] = useState('');
   const [stock, setStock] = useState([]);
@@ -60,7 +60,10 @@ const InventoryPage = () => {
       const res = await branchService.getBranches(businessId);
       const list = res.data || [];
       setBranches(list);
-      if (list.length > 0) setSelectedBranch(list[0].id);
+      // Select user's branch if available, otherwise first
+      const userBranch = list.find(b => b.id === user?.branchId);
+      if (userBranch) setSelectedBranch(userBranch.id);
+      else if (list.length > 0) setSelectedBranch(list[0].id);
       else setLoading(false);
     } catch (e) { setLoading(false); }
   };
@@ -220,9 +223,6 @@ const InventoryPage = () => {
           </Button>
           <Button variant="outline" onClick={() => openMovementModal('exit')} disabled={!selectedBranch}>
             <ArrowDownRight size={18} /><span className="hidden sm:inline">Salida</span>
-          </Button>
-          <Button variant="outline" onClick={() => { setTransferItem(null); setTransferForm({ targetBranchId: '', quantity: '', notes: '' }); setShowTransferModal(true); }} disabled={!selectedBranch || branches.length < 2}>
-            <ArrowLeftRight size={18} /><span className="hidden sm:inline">Transferir</span>
           </Button>
         </div>
       </div>
