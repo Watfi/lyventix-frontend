@@ -19,9 +19,16 @@ export const uploadProductImage = async (file, businessId) => {
       contentType: file.type,
     });
 
-  if (error) throw new Error(`Error subiendo imagen: ${error.message}`);
+  if (error) {
+    console.error('Supabase upload error:', error);
+    throw new Error(`Error subiendo imagen: ${error.message}`);
+  }
 
-  return `${supabaseUrl}/storage/v1/object/public/${BUCKET}/${data.path}`;
+  console.log('Upload success, data:', JSON.stringify(data));
+  const path = data.path || data.fullPath || fileName;
+  const url = `${supabaseUrl}/storage/v1/object/public/${BUCKET}/${path}`;
+  console.log('Generated URL:', url);
+  return url;
 };
 
 export const deleteProductImage = async (imageUrl) => {
