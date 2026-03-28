@@ -1,8 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://vuzcuuofuwvdnsrnapqc.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1emN1dW9mdXd2ZG5zcm5hcHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxODc0MDQsImV4cCI6MjA4NTc2MzQwNH0.1172AYnqaidcebUdL7D_lRtNCt3iAK5WZFTF9StCW4c';
+const supabaseAnonKey = import.meta.env.VITE_SB_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1emN1dW9mdXd2ZG5zcm5hcHFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxODc0MDQsImV4cCI6MjA4NTc2MzQwNH0.1172AYnqaidcebUdL7D_lRtNCt3iAK5WZFTF9StCW4c';
 
+console.log('Supabase URL:', supabaseUrl);
+console.log('Supabase key length:', supabaseAnonKey?.length, 'starts with:', supabaseAnonKey?.substring(0, 20));
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const BUCKET = 'product-images';
