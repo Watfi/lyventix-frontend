@@ -21,11 +21,7 @@ export const uploadProductImage = async (file, businessId) => {
 
   if (error) throw new Error(`Error subiendo imagen: ${error.message}`);
 
-  const { data: urlData } = supabase.storage
-    .from(BUCKET)
-    .getPublicUrl(data.path);
-
-  return urlData.publicUrl;
+  return `${supabaseUrl}/storage/v1/object/public/${BUCKET}/${data.path}`;
 };
 
 export const deleteProductImage = async (imageUrl) => {
