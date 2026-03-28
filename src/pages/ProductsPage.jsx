@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Package, Search, Plus, Edit2, Trash2, X, Loader2, AlertCircle, Warehouse, ChevronDown, ChevronUp, Layers } from 'lucide-react';
+import { Package, Search, Plus, Edit2, Trash2, X, Loader2, AlertCircle, Warehouse, ChevronDown, ChevronUp, Layers, ImagePlus, Camera } from 'lucide-react';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import useAuthStore from '../store/authStore';
 import productService from '../services/productService';
 import categoryService from '../services/categoryService';
+import { uploadProductImage, deleteProductImage } from '../services/supabaseStorage';
 
 const CLOTHING_SIZES = {
   Ropa: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
@@ -49,8 +50,13 @@ const ProductsPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
 
-  const emptyForm = { name: '', sku: '', barcode: '', salePrice: '', costPrice: '', categoryId: '', productType: 'SIMPLE', taxable: true, taxRate: '19', description: '', brand: '', model: '', color: '', material: '', gender: '', season: '', saleUnitOfMeasure: '', conversionFactor: '', sanitaryRegistration: '', warrantyDays: '' };
+  const emptyForm = { name: '', sku: '', barcode: '', salePrice: '', costPrice: '', categoryId: '', productType: 'SIMPLE', taxable: true, taxRate: '19', description: '', brand: '', model: '', color: '', material: '', gender: '', season: '', saleUnitOfMeasure: '', conversionFactor: '', sanitaryRegistration: '', warrantyDays: '', mainImageUrl: '' };
   const [form, setForm] = useState(emptyForm);
+
+  // Image state
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Variants state
   const [variants, setVariants] = useState([]);
@@ -129,9 +135,36 @@ const ProductsPage = () => {
   const addCustomSize = () => { if (customSize.trim() && !selectedSizes.includes(customSize.trim())) { setSelectedSizes([...selectedSizes, customSize.trim()]); setCustomSize(''); } };
   const addCustomColor = () => { if (customColor.trim() && !selectedColors.includes(customColor.trim())) { setSelectedColors([...selectedColors, customColor.trim()]); setCustomColor(''); } };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { setError('La imagen no puede pesar más de 5MB'); return; }
+    if (!file.type.startsWith('image/')) { setError('Solo se permiten archivos de imagen'); return; }
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    if (editing) setForm({ ...form, mainImageUrl: '' });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      let imageUrl = form.mainImageUrl || null;
+      if (imageFile) {
+        setUploadingImage(true);
+        try {
+          imageUrl = await uploadProductImage(imageFile, businessId);
+        } catch (imgErr) {
+          setError('Error subiendo imagen: ' + imgErr.message);
+          setUploadingImage(false);
+          return;
+        }
+        setUploadingImage(false);
+      }
       const hasVariants = form.productType === 'VARIABLE' && variants.length > 0;
       const payload = {
         name: form.name,
@@ -156,6 +189,7 @@ const ProductsPage = () => {
         conversionFactor: form.conversionFactor ? parseFloat(form.conversionFactor) : null,
         sanitaryRegistration: form.sanitaryRegistration || null,
         warrantyDays: form.warrantyDays ? parseInt(form.warrantyDays) : null,
+        mainImageUrl: imageUrl,
         variants: hasVariants ? variants.map(v => {
           const basePrice = parseFloat(form.salePrice) || 0;
           const vPrice = parseFloat(v.variantPrice);
@@ -188,7 +222,9 @@ const ProductsPage = () => {
 
   const handleEdit = (p) => {
     setEditing(p);
-    setForm({ name: p.name || '', sku: p.sku || '', barcode: p.barcode || '', salePrice: p.salePrice || '', costPrice: p.costPrice || '', categoryId: p.categoryId || '', productType: p.productType || 'SIMPLE', taxable: p.taxable ?? true, taxRate: p.taxRate || '19', description: p.description || '', brand: p.brand || '', model: p.model || '', color: p.color || '', material: p.material || '', gender: p.gender || '', season: p.season || '', saleUnitOfMeasure: p.saleUnitOfMeasure || '', conversionFactor: p.conversionFactor || '', sanitaryRegistration: p.sanitaryRegistration || '', warrantyDays: p.warrantyDays || '' });
+    setForm({ name: p.name || '', sku: p.sku || '', barcode: p.barcode || '', salePrice: p.salePrice || '', costPrice: p.costPrice || '', categoryId: p.categoryId || '', productType: p.productType || 'SIMPLE', taxable: p.taxable ?? true, taxRate: p.taxRate || '19', description: p.description || '', brand: p.brand || '', model: p.model || '', color: p.color || '', material: p.material || '', gender: p.gender || '', season: p.season || '', saleUnitOfMeasure: p.saleUnitOfMeasure || '', conversionFactor: p.conversionFactor || '', sanitaryRegistration: p.sanitaryRegistration || '', warrantyDays: p.warrantyDays || '', mainImageUrl: p.mainImageUrl || '' });
+    setImageFile(null);
+    setImagePreview(p.mainImageUrl || null);
     // Load existing variants - convert priceAdjustment to absolute price
     if (p.variants && p.variants.length > 0) {
       const basePrice = parseFloat(p.salePrice) || 0;
@@ -218,7 +254,7 @@ const ProductsPage = () => {
     try { await productService.deleteProduct(id); fetchProducts(); } catch (err) { setError(err.response?.data?.message || 'Error'); }
   };
 
-  const resetForm = () => { setForm(emptyForm); setVariants([]); setSelectedSizes([]); setSelectedColors([]); };
+  const resetForm = () => { setForm(emptyForm); setVariants([]); setSelectedSizes([]); setSelectedColors([]); setImageFile(null); setImagePreview(null); };
 
   const handleSeedCategories = async () => {
     try {
@@ -339,6 +375,31 @@ const ProductsPage = () => {
                 <Input label="Impuesto %" type="number" value={form.taxRate} onChange={(e) => setForm({ ...form, taxRate: e.target.value })} />
               </div>
               <div><label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descripción</label><textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-800 dark:text-white outline-none focus:border-primary-500 transition-colors h-20 resize-none shadow-sm shadow-primary-900/5 dark:shadow-none" /></div>
+
+              {/* Image upload */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Imagen del Producto</label>
+                <div className="flex items-center gap-4">
+                  <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-slate-300 dark:border-white/20 flex items-center justify-center overflow-hidden bg-slate-50 dark:bg-white/5 shrink-0 relative">
+                    {imagePreview ? (
+                      <>
+                        <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                        <button type="button" onClick={removeImage} className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow-lg hover:bg-red-600"><X size={12} /></button>
+                      </>
+                    ) : (
+                      <Camera size={28} className="text-slate-400 dark:text-slate-500" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-primary-500/10 hover:bg-primary-500/20 text-primary-600 dark:text-primary-400 rounded-xl text-sm font-medium transition-colors">
+                      <ImagePlus size={16} />
+                      {imagePreview ? 'Cambiar imagen' : 'Subir imagen'}
+                      <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                    </label>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1.5">JPG, PNG o WebP. Máx 5MB.</p>
+                  </div>
+                </div>
+              </div>
 
               {/* Additional fields by business type */}
               {visibleFields.length > 0 && (
