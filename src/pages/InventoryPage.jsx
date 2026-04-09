@@ -7,12 +7,14 @@ import {
 import Button from '../components/Button';
 import Input from '../components/Input';
 import useAuthStore from '../store/authStore';
+import { useLanguage } from '../i18n/LanguageContext';
 import inventoryService from '../services/inventoryService';
 import branchService from '../services/branchService';
 import productService from '../services/productService';
 
 const InventoryPage = () => {
   const { businessId, user } = useAuthStore();
+  const { t } = useLanguage();
   const [branches, setBranches] = useState([]);
   const [selectedBranch, setSelectedBranch] = useState('');
   const [stock, setStock] = useState([]);
@@ -214,15 +216,15 @@ const InventoryPage = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Inventario</h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Stock actual, entradas y salidas por sucursal</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">{t('inventory_title')}</h2>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">{t('inventory_desc')}</p>
         </div>
         <div className="flex gap-2 sm:gap-3">
           <Button variant="outline" onClick={() => openMovementModal('entry')} disabled={!selectedBranch}>
-            <ArrowUpRight size={18} /><span className="hidden sm:inline">Entrada</span>
+            <ArrowUpRight size={18} /><span className="hidden sm:inline">{t('inventory_entry_btn')}</span>
           </Button>
           <Button variant="outline" onClick={() => openMovementModal('exit')} disabled={!selectedBranch}>
-            <ArrowDownRight size={18} /><span className="hidden sm:inline">Salida</span>
+            <ArrowDownRight size={18} /><span className="hidden sm:inline">{t('inventory_exit_btn')}</span>
           </Button>
         </div>
       </div>
@@ -234,7 +236,7 @@ const InventoryPage = () => {
           {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
           {branches.length === 0 && <option value="">No hay sucursales</option>}
         </select>
-        <Input className="flex-1" placeholder="Filtrar productos en inventario..." icon={Search} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+        <Input className="flex-1" placeholder={t('inventory_search_placeholder')} icon={Search} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
         <div className="text-sm text-slate-500 dark:text-slate-400 whitespace-nowrap">{filteredStock.length} producto{filteredStock.length !== 1 ? 's' : ''}</div>
       </div>
 
@@ -266,8 +268,8 @@ const InventoryPage = () => {
                 <div className="flex flex-wrap items-center gap-2 mb-3">
                   <span className="bg-slate-100 dark:bg-white/5 px-2 py-1 rounded-lg text-[10px] text-slate-600 dark:text-slate-300">{item.categoryName || 'Sin cat.'}</span>
                   {item.lowStock
-                    ? <span className="bg-red-500/10 text-red-400 text-[10px] font-bold px-2 py-1 rounded-lg inline-flex items-center gap-1"><AlertCircle size={10} />Bajo</span>
-                    : <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-1 rounded-lg">Normal</span>}
+                    ? <span className="bg-red-500/10 text-red-400 text-[10px] font-bold px-2 py-1 rounded-lg inline-flex items-center gap-1"><AlertCircle size={10} />{t('inventory_status_low')}</span>
+                    : <span className="bg-emerald-500/10 text-emerald-400 text-[10px] font-bold px-2 py-1 rounded-lg">{t('inventory_status_normal')}</span>}
                   <span className="text-slate-800 dark:text-white font-bold text-xs ml-auto">{fmt(item.salePrice)}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs text-slate-500 mb-3">
@@ -327,7 +329,7 @@ const InventoryPage = () => {
             {filteredStock.length === 0 && (
               <div className="text-center py-16 text-slate-500">
                 <Warehouse size={48} className="mx-auto mb-4 opacity-40" />
-                <p>No hay productos en inventario</p>
+                <p>{t('inventory_no_stock')}</p>
               </div>
             )}
           </div>
@@ -339,15 +341,15 @@ const InventoryPage = () => {
               <thead className="text-xs text-slate-500 uppercase bg-slate-50 dark:bg-white/[0.02] border-b border-slate-200 dark:border-white/5">
                 <tr>
                   <th className="px-5 py-4 w-8"></th>
-                  <th className="px-5 py-4">Producto</th>
-                  <th className="px-5 py-4">SKU</th>
-                  <th className="px-5 py-4">Categoría</th>
-                  <th className="px-5 py-4 text-center">Stock</th>
-                  <th className="px-5 py-4 text-center">Mín</th>
-                  <th className="px-5 py-4 text-center">Máx</th>
-                  <th className="px-5 py-4">Precio</th>
-                  <th className="px-5 py-4">Estado</th>
-                  <th className="px-5 py-4 text-right">Acciones</th>
+                  <th className="px-5 py-4">{t('inventory_col_product')}</th>
+                  <th className="px-5 py-4">{t('inventory_col_sku')}</th>
+                  <th className="px-5 py-4">{t('inventory_col_category')}</th>
+                  <th className="px-5 py-4 text-center">{t('inventory_col_stock')}</th>
+                  <th className="px-5 py-4 text-center">{t('inventory_col_min')}</th>
+                  <th className="px-5 py-4 text-center">{t('inventory_col_max')}</th>
+                  <th className="px-5 py-4">{t('inventory_col_price')}</th>
+                  <th className="px-5 py-4">{t('inventory_col_status')}</th>
+                  <th className="px-5 py-4 text-right">{t('inventory_col_actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-white/5">
@@ -376,8 +378,8 @@ const InventoryPage = () => {
                       <td className="px-5 py-4 text-slate-800 dark:text-white font-bold">{fmt(item.salePrice)}</td>
                       <td className="px-5 py-4">
                         {item.lowStock
-                          ? <span className="bg-red-500/10 text-red-400 text-xs font-bold px-2.5 py-1 rounded-lg inline-flex items-center gap-1"><AlertCircle size={12} />Bajo</span>
-                          : <span className="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-1 rounded-lg">Normal</span>}
+                          ? <span className="bg-red-500/10 text-red-400 text-xs font-bold px-2.5 py-1 rounded-lg inline-flex items-center gap-1"><AlertCircle size={12} />{t('inventory_status_low')}</span>
+                          : <span className="bg-emerald-500/10 text-emerald-400 text-xs font-bold px-2.5 py-1 rounded-lg">{t('inventory_status_normal')}</span>}
                       </td>
                       <td className="px-5 py-4 text-right">
                         <div className="flex gap-1.5 justify-end">
@@ -484,7 +486,7 @@ const InventoryPage = () => {
             <form onSubmit={handleMovement} className="space-y-4">
               {/* Product Search */}
               <div ref={dropdownRef} className="relative">
-                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Buscar Producto *</label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">{t('inventory_select_product')}</label>
                 <div className="relative">
                   <input type="text" value={productSearch}
                     onChange={(e) => { setProductSearch(e.target.value); setSelectedProduct(null); setForm({ ...form, productId: '' }); }}
@@ -521,7 +523,7 @@ const InventoryPage = () => {
                   </div>
                   {selectedProduct.hasVariants && selectedProduct.variants && selectedProduct.variants.length > 0 && (
                     <div>
-                      <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Variante *</label>
+                      <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">{t('inventory_select_variant')}</label>
                       <select value={form.variantId} onChange={(e) => setForm({ ...form, variantId: e.target.value })}
                         className="w-full bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-800 dark:text-white outline-none focus:border-primary-500 transition-colors [&>option]:text-slate-800 dark:[&>option]:text-white" required>
                         <option value="">Seleccionar variante...</option>
@@ -537,12 +539,12 @@ const InventoryPage = () => {
               )}
 
               <div className="grid grid-cols-2 gap-4">
-                <Input label="Cantidad *" type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} required min="1" />
-                <Input label="Costo Unitario" type="number" step="0.01" value={form.unitCost} onChange={(e) => setForm({ ...form, unitCost: e.target.value })} />
+                <Input label={t('inventory_quantity_label')} type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} required min="1" />
+                <Input label={t('inventory_col_price')} type="number" step="0.01" value={form.unitCost} onChange={(e) => setForm({ ...form, unitCost: e.target.value })} />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">Razón *</label>
+                <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-2">{t('inventory_reason_label')}</label>
                 <select value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })}
                   className="w-full bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-800 dark:text-white outline-none focus:border-primary-500 [&>option]:bg-white [&>option]:text-white">
                   {movementType === 'entry' ? (<>
@@ -556,12 +558,12 @@ const InventoryPage = () => {
                 </select>
               </div>
 
-              <Input label="Referencia" value={form.reference} onChange={(e) => setForm({ ...form, reference: e.target.value })} placeholder="Ej: Factura #123" />
+              <Input label={t('inventory_reference_label')} value={form.reference} onChange={(e) => setForm({ ...form, reference: e.target.value })} placeholder="Ej: Factura #123" />
 
               <div className="flex gap-3 pt-4">
-                <Button type="button" variant="outline" onClick={() => setShowModal(false)} className="flex-1">Cancelar</Button>
+                <Button type="button" variant="outline" onClick={() => setShowModal(false)} className="flex-1">{t('cancel')}</Button>
                 <Button type="submit" className="flex-1" disabled={!selectedProduct || (selectedProduct?.hasVariants && selectedProduct?.variants?.length > 0 && !form.variantId)}>
-                  {movementType === 'entry' ? '📥 Registrar Entrada' : '📤 Registrar Salida'}
+                  {movementType === 'entry' ? `📥 ${t('inventory_entry_title')}` : `📤 ${t('inventory_exit_title')}`}
                 </Button>
               </div>
             </form>
@@ -597,8 +599,8 @@ const InventoryPage = () => {
                 <p className="text-amber-700 dark:text-amber-300 text-xs">Cuando el stock baje del mínimo, se mostrará una alerta de "Stock Bajo".</p>
               </div>
               <div className="flex gap-3 pt-4">
-                <Button type="button" variant="outline" onClick={() => setShowEditModal(false)} className="flex-1">Cancelar</Button>
-                <Button type="submit" className="flex-1">Guardar</Button>
+                <Button type="button" variant="outline" onClick={() => setShowEditModal(false)} className="flex-1">{t('cancel')}</Button>
+                <Button type="submit" className="flex-1">{t('save')}</Button>
               </div>
             </form>
           </motion.div>
@@ -651,12 +653,12 @@ const InventoryPage = () => {
                 value={transferForm.quantity} onChange={(e) => setTransferForm({ ...transferForm, quantity: e.target.value })}
                 placeholder="Ej: 10" required />
 
-              <Input label="Notas (opcional)" value={transferForm.notes}
+              <Input label={t('inventory_notes_label')} value={transferForm.notes}
                 onChange={(e) => setTransferForm({ ...transferForm, notes: e.target.value })}
                 placeholder="Motivo de la transferencia..." />
 
               <div className="flex gap-3 pt-4">
-                <Button type="button" variant="outline" onClick={() => setShowTransferModal(false)} className="flex-1">Cancelar</Button>
+                <Button type="button" variant="outline" onClick={() => setShowTransferModal(false)} className="flex-1">{t('cancel')}</Button>
                 <Button type="submit" className="flex-1" disabled={!transferItem || !transferForm.targetBranchId || !transferForm.quantity}>🔄 Transferir</Button>
               </div>
             </form>

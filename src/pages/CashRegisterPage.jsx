@@ -17,9 +17,11 @@ import Input from '../components/Input';
 import cashService from '../services/cashService';
 import branchService from '../services/branchService';
 import useAuthStore from '../store/authStore';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const CashRegisterPage = () => {
   const { user, businessId, setBranch } = useAuthStore();
+  const { t } = useLanguage();
   const [session, setSession] = useState(null);
   const [cashRegister, setCashRegister] = useState(null);
   const [sessionHistory, setSessionHistory] = useState([]);
@@ -189,9 +191,9 @@ const CashRegisterPage = () => {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Control de Caja</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">{t('cash_title')}</h2>
           <p className="text-slate-500 dark:text-slate-400 mt-1">
-            Supervisa el flujo de efectivo y sesiones diarias
+            {t('cash_desc')}
             {user?.branchName && <span className="ml-2 text-primary-500 font-semibold">• {user.branchName}</span>}
           </p>
         </div>
@@ -208,7 +210,7 @@ const CashRegisterPage = () => {
             loading={actionLoading}
           >
             {isSessionOpen ? <Lock size={20} /> : <Unlock size={20} />}
-            <span>{isSessionOpen ? 'Cerrar Caja' : 'Abrir Caja'}</span>
+            <span>{isSessionOpen ? t('cash_close_btn') : t('cash_open_btn')}</span>
           </Button>
         </div>
       </div>
@@ -228,7 +230,7 @@ const CashRegisterPage = () => {
               <div className="absolute top-0 right-0 p-8 opacity-5">
                 <Wallet size={120} />
               </div>
-              <p className="text-slate-500 dark:text-slate-400 font-medium">Balance Esperado</p>
+              <p className="text-slate-500 dark:text-slate-400 font-medium">{t('cash_expected_balance')}</p>
               <h3 className="text-4xl font-bold text-slate-800 dark:text-white mt-2">
                 {isSessionOpen ? fmt(session?.expectedBalance || session?.openingBalance) : fmt(0)}
               </h3>
@@ -249,13 +251,13 @@ const CashRegisterPage = () => {
               <div className="flex items-center gap-3 mt-4">
                 <div className={`w-3 h-3 rounded-full ${isSessionOpen ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
                 <span className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-wider">
-                  {isSessionOpen ? 'Abierta' : 'Cerrada'}
+                  {isSessionOpen ? t('cash_session_open') : t('cash_session_closed')}
                 </span>
               </div>
               <p className="text-slate-500 text-sm mt-4">
                 {isSessionOpen
                   ? `Abierta el ${fmtDate(session?.openingDate)}`
-                  : 'No hay sesión activa actualmente'}
+                  : t('cash_no_active')}
               </p>
             </div>
           </div>
@@ -265,7 +267,7 @@ const CashRegisterPage = () => {
             <div className="p-6 border-b border-slate-200 dark:border-white/5 flex items-center justify-between bg-slate-50 dark:bg-white/[0.02]">
               <h4 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <History size={18} className="text-primary-400" />
-                Historial de Sesiones
+                {t('cash_history_title')}
               </h4>
             </div>
             {/* Mobile card view */}
@@ -279,7 +281,7 @@ const CashRegisterPage = () => {
                         : 'bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400'
                     }`}>
                       <div className={`w-1.5 h-1.5 rounded-full ${s.status === 'OPEN' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
-                      {s.status === 'OPEN' ? 'Abierta' : 'Cerrada'}
+                      {s.status === 'OPEN' ? t('cash_session_open') : t('cash_session_closed')}
                     </span>
                     <span className="text-slate-500 text-xs">{s.user?.username || s.user?.firstName || '-'}</span>
                   </div>
@@ -290,19 +292,19 @@ const CashRegisterPage = () => {
                   {s.closingDate && <p className="text-slate-500 text-xs mb-3">Cierre: {fmtDate(s.closingDate)}</p>}
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="bg-slate-50 dark:bg-white/5 rounded-xl p-2">
-                      <p className="text-slate-500">Apertura</p>
+                      <p className="text-slate-500">{t('cash_col_opening_amount')}</p>
                       <p className="text-slate-800 dark:text-white font-bold">{fmt(s.openingBalance)}</p>
                     </div>
                     <div className="bg-slate-50 dark:bg-white/5 rounded-xl p-2">
-                      <p className="text-slate-500">Esperado</p>
+                      <p className="text-slate-500">{t('cash_col_expected')}</p>
                       <p className="text-blue-500 font-bold">{fmt(s.expectedBalance)}</p>
                     </div>
                     <div className="bg-slate-50 dark:bg-white/5 rounded-xl p-2">
-                      <p className="text-slate-500">Real Cierre</p>
+                      <p className="text-slate-500">{t('cash_col_actual')}</p>
                       <p className="text-slate-800 dark:text-white font-bold">{s.actualBalance != null ? fmt(s.actualBalance) : '-'}</p>
                     </div>
                     <div className="bg-slate-50 dark:bg-white/5 rounded-xl p-2">
-                      <p className="text-slate-500">Ganancias</p>
+                      <p className="text-slate-500">{t('cash_col_profit')}</p>
                       <p className="text-amber-500 font-bold">{s.expectedBalance != null && s.openingBalance != null ? fmt(Number(s.expectedBalance) - Number(s.openingBalance)) : '-'}</p>
                     </div>
                   </div>
@@ -315,7 +317,7 @@ const CashRegisterPage = () => {
                   )}
                 </div>
               )) : (
-                <p className="text-slate-500 text-center py-8">No hay sesiones registradas aún</p>
+                <p className="text-slate-500 text-center py-8">{t('cash_history_empty')}</p>
               )}
             </div>
 
@@ -325,15 +327,15 @@ const CashRegisterPage = () => {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-200 dark:border-white/5">
-                      <th className="text-left p-4 text-slate-500 dark:text-slate-400 font-medium">Estado</th>
-                      <th className="text-left p-4 text-slate-500 dark:text-slate-400 font-medium">Apertura</th>
-                      <th className="text-left p-4 text-slate-500 dark:text-slate-400 font-medium">Cierre</th>
-                      <th className="text-right p-4 text-slate-500 dark:text-slate-400 font-medium">Monto Apertura</th>
-                      <th className="text-right p-4 text-slate-500 dark:text-slate-400 font-medium">Esperado</th>
-                      <th className="text-right p-4 text-slate-500 dark:text-slate-400 font-medium">Real Cierre</th>
-                      <th className="text-right p-4 text-slate-500 dark:text-slate-400 font-medium">Diferencia</th>
-                      <th className="text-right p-4 text-slate-500 dark:text-slate-400 font-medium">Ganancias</th>
-                      <th className="text-left p-4 text-slate-500 dark:text-slate-400 font-medium">Usuario</th>
+                      <th className="text-left p-4 text-slate-500 dark:text-slate-400 font-medium">{t('cash_col_status')}</th>
+                      <th className="text-left p-4 text-slate-500 dark:text-slate-400 font-medium">{t('cash_col_opening')}</th>
+                      <th className="text-left p-4 text-slate-500 dark:text-slate-400 font-medium">{t('cash_col_closing')}</th>
+                      <th className="text-right p-4 text-slate-500 dark:text-slate-400 font-medium">{t('cash_col_opening_amount')}</th>
+                      <th className="text-right p-4 text-slate-500 dark:text-slate-400 font-medium">{t('cash_col_expected')}</th>
+                      <th className="text-right p-4 text-slate-500 dark:text-slate-400 font-medium">{t('cash_col_actual')}</th>
+                      <th className="text-right p-4 text-slate-500 dark:text-slate-400 font-medium">{t('cash_col_difference')}</th>
+                      <th className="text-right p-4 text-slate-500 dark:text-slate-400 font-medium">{t('cash_col_profit')}</th>
+                      <th className="text-left p-4 text-slate-500 dark:text-slate-400 font-medium">{t('cash_col_user')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -346,7 +348,7 @@ const CashRegisterPage = () => {
                               : 'bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400'
                           }`}>
                             <div className={`w-1.5 h-1.5 rounded-full ${s.status === 'OPEN' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
-                            {s.status === 'OPEN' ? 'Abierta' : 'Cerrada'}
+                            {s.status === 'OPEN' ? t('cash_session_open') : t('cash_session_closed')}
                           </span>
                         </td>
                         <td className="p-4">
@@ -385,7 +387,7 @@ const CashRegisterPage = () => {
                   </tbody>
                 </table>
               ) : (
-                <p className="text-slate-500 text-center py-8">No hay sesiones registradas aún</p>
+                <p className="text-slate-500 text-center py-8">{t('cash_history_empty')}</p>
               )}
             </div>
           </div>
@@ -432,12 +434,12 @@ const CashRegisterPage = () => {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="glass-panel rounded-3xl p-8 w-full max-w-md">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-slate-800 dark:text-white">Abrir Sesión de Caja</h3>
+              <h3 className="text-xl font-bold text-slate-800 dark:text-white">{t('cash_opening_modal_title')}</h3>
               <button onClick={() => setShowOpenModal(false)} className="text-slate-500 dark:text-slate-400 hover:text-white"><X size={20} /></button>
             </div>
             <form onSubmit={handleOpenSession} className="space-y-6">
               <Input
-                label="Monto de Apertura"
+                label={t('cash_opening_amount_label')}
                 type="number"
                 placeholder="0.00"
                 value={openingAmount}
@@ -445,8 +447,8 @@ const CashRegisterPage = () => {
                 required
               />
               <div className="flex gap-3">
-                <Button type="button" variant="outline" onClick={() => setShowOpenModal(false)} className="flex-1">Cancelar</Button>
-                <Button type="submit" className="flex-1" loading={actionLoading}>Abrir Caja</Button>
+                <Button type="button" variant="outline" onClick={() => setShowOpenModal(false)} className="flex-1">{t('cancel')}</Button>
+                <Button type="submit" className="flex-1" loading={actionLoading}>{t('cash_open_btn')}</Button>
               </div>
             </form>
           </div>
@@ -458,7 +460,7 @@ const CashRegisterPage = () => {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="glass-panel rounded-3xl p-8 w-full max-w-md">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-slate-800 dark:text-white">Cerrar Sesión de Caja</h3>
+              <h3 className="text-xl font-bold text-slate-800 dark:text-white">{t('cash_closing_modal_title')}</h3>
               <button onClick={() => setShowCloseModal(false)} className="text-slate-500 dark:text-slate-400 hover:text-white"><X size={20} /></button>
             </div>
 
@@ -479,7 +481,7 @@ const CashRegisterPage = () => {
 
             <form onSubmit={handleCloseSession} className="space-y-5">
               <Input
-                label="Monto Real en Caja (conteo físico)"
+                label={t('cash_closing_amount_label')}
                 type="number"
                 placeholder="0.00"
                 value={closingAmount}
@@ -496,14 +498,14 @@ const CashRegisterPage = () => {
                 </div>
               )}
               <Input
-                label="Notas (opcional)"
-                placeholder="Observaciones del cierre..."
+                label={t('notes')}
+                placeholder={t('cash_closing_notes_placeholder')}
                 value={closingNotes}
                 onChange={(e) => setClosingNotes(e.target.value)}
               />
               <div className="flex gap-3">
-                <Button type="button" variant="outline" onClick={() => setShowCloseModal(false)} className="flex-1">Cancelar</Button>
-                <Button type="submit" className="flex-1" loading={actionLoading}>Cerrar Caja</Button>
+                <Button type="button" variant="outline" onClick={() => setShowCloseModal(false)} className="flex-1">{t('cancel')}</Button>
+                <Button type="submit" className="flex-1" loading={actionLoading}>{t('cash_close_btn')}</Button>
               </div>
             </form>
           </div>

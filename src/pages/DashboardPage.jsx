@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 import dashboardService from '../services/dashboardService';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const StatCard = ({ label, value, icon: Icon, trend, trendValue, color }) => (
   <motion.div
@@ -37,6 +38,7 @@ const StatCard = ({ label, value, icon: Icon, trend, trendValue, color }) => (
 
 const DashboardPage = () => {
   const { businessId } = useAuthStore();
+  const { t } = useLanguage();
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -83,7 +85,7 @@ const DashboardPage = () => {
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
-          label="Ventas Totales"
+          label={t('dashboard_total_sales')}
           value={fmt(dashboard?.totalSales)}
           icon={TrendingUp}
           trend="up"
@@ -91,23 +93,23 @@ const DashboardPage = () => {
           color="text-primary-400 bg-primary-500"
         />
         <StatCard
-          label="Ticket Promedio"
+          label={t('dashboard_avg_ticket')}
           value={fmt(dashboard?.averageTicket)}
           icon={Users}
           color="text-purple-400 bg-purple-500"
         />
         <StatCard
-          label="Productos"
+          label={t('dashboard_products')}
           value={dashboard?.productsCount || 0}
           icon={Package}
           color="text-blue-400 bg-blue-500"
         />
         <StatCard
-          label="Stock Bajo"
+          label={t('dashboard_low_stock')}
           value={dashboard?.lowStockProductsCount || 0}
           icon={AlertCircle}
           trend={dashboard?.lowStockProductsCount > 0 ? 'down' : undefined}
-          trendValue="Alertas"
+          trendValue={t('dashboard_alerts')}
           color="text-orange-400 bg-orange-500"
         />
       </div>
@@ -115,14 +117,14 @@ const DashboardPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Top Products */}
         <div className="lg:col-span-2 p-8 rounded-3xl glass-card min-h-[400px]">
-          <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-8">Productos Más Vendidos</h3>
+          <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-8">{t('dashboard_top_products')}</h3>
           <div className="space-y-6">
             {(dashboard?.topProducts || []).map((p, i) => (
               <div key={i} className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-800 dark:text-white font-medium">{p.productName}</span>
                   <span className="text-slate-500">
-                    {p.quantitySold} uds • {fmt(p.totalRevenue)}
+                    {p.quantitySold} {t('dashboard_units')} • {fmt(p.totalRevenue)}
                   </span>
                 </div>
                 <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
@@ -140,14 +142,14 @@ const DashboardPage = () => {
               </div>
             ))}
             {(!dashboard?.topProducts || dashboard.topProducts.length === 0) && (
-              <p className="text-slate-500 dark:text-slate-500 text-center py-8">No hay datos de productos aún</p>
+              <p className="text-slate-500 dark:text-slate-500 text-center py-8">{t('dashboard_no_products')}</p>
             )}
           </div>
         </div>
 
         {/* Recent Sales */}
         <div className="p-8 rounded-3xl glass-card">
-          <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-6">Ventas Recientes</h3>
+          <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-6">{t('dashboard_recent_sales')}</h3>
           <div className="space-y-6">
             {(dashboard?.recentSales || []).map((sale, i) => (
               <div key={i} className="flex gap-4">
@@ -161,7 +163,7 @@ const DashboardPage = () => {
               </div>
             ))}
             {(!dashboard?.recentSales || dashboard.recentSales.length === 0) && (
-              <p className="text-slate-500 text-center py-4">No hay ventas recientes</p>
+              <p className="text-slate-500 text-center py-4">{t('dashboard_no_recent')}</p>
             )}
           </div>
         </div>

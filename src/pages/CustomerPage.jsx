@@ -17,9 +17,11 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import useAuthStore from '../store/authStore';
 import customerService from '../services/customerService';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const CustomerPage = () => {
   const { businessId } = useAuthStore();
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -89,7 +91,7 @@ const CustomerPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('¿Estás seguro de eliminar este cliente?')) return;
+    if (!confirm(t('customers_confirm_delete'))) return;
     try {
       await customerService.deleteCustomer(businessId, id);
       fetchCustomers();
@@ -102,19 +104,19 @@ const CustomerPage = () => {
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Clientes</h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Gestiona tu base de datos de compradores y lealtad</p>
+          <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">{t('customers_title')}</h2>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">{t('customers_desc')}</p>
         </div>
         <Button className="h-fit" onClick={() => { setEditingCustomer(null); setFormData({ firstName: '', lastName: '', email: '', phone: '', taxId: '', address: '', city: '', customerType: 'INDIVIDUAL' }); setShowModal(true); }}>
           <UserPlus size={20} />
-          <span>Nuevo Cliente</span>
+          <span>{t('customers_btn_new')}</span>
         </Button>
       </div>
 
       <div className="glass-panel p-4 rounded-3xl flex items-center gap-4">
         <Input
           className="flex-1"
-          placeholder="Buscar clientes por nombre, email o identificación..."
+          placeholder={t('customers_search_placeholder')}
           icon={Search}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -192,7 +194,7 @@ const CustomerPage = () => {
           {customers.length === 0 && !loading && (
             <div className="col-span-full text-center py-16 text-slate-500">
               <Users size={48} className="mx-auto mb-4 opacity-40" />
-              <p>No se encontraron clientes</p>
+              <p>{t('customers_no_found')}</p>
             </div>
           )}
         </div>
@@ -203,24 +205,24 @@ const CustomerPage = () => {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass-panel rounded-3xl p-8 w-full max-w-lg">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-slate-800 dark:text-white">{editingCustomer ? 'Editar Cliente' : 'Nuevo Cliente'}</h3>
+              <h3 className="text-xl font-bold text-slate-800 dark:text-white">{editingCustomer ? t('customers_modal_edit_title') : t('customers_modal_new_title')}</h3>
               <button onClick={() => setShowModal(false)} className="text-slate-500 dark:text-slate-400 hover:text-white"><X size={20} /></button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <Input label="Nombre" value={formData.firstName} onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} required />
-                <Input label="Apellido" value={formData.lastName} onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} required />
+                <Input label={t('customers_form_firstname')} value={formData.firstName} onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} required />
+                <Input label={t('customers_form_lastname')} value={formData.lastName} onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} required />
               </div>
-              <Input label="Email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
+              <Input label={t('email')} type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
               <div className="grid grid-cols-2 gap-4">
-                <Input label="Teléfono" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
-                <Input label="NIT/CC" value={formData.taxId} onChange={(e) => setFormData({ ...formData, taxId: e.target.value })} />
+                <Input label={t('phone')} value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} />
+                <Input label={t('customers_form_taxid')} value={formData.taxId} onChange={(e) => setFormData({ ...formData, taxId: e.target.value })} />
               </div>
-              <Input label="Dirección" value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
-              <Input label="Ciudad" value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} />
+              <Input label={t('address')} value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} />
+              <Input label={t('city')} value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} />
               <div className="flex gap-3 pt-4">
-                <Button type="button" variant="outline" onClick={() => setShowModal(false)} className="flex-1">Cancelar</Button>
-                <Button type="submit" className="flex-1">{editingCustomer ? 'Actualizar' : 'Crear Cliente'}</Button>
+                <Button type="button" variant="outline" onClick={() => setShowModal(false)} className="flex-1">{t('cancel')}</Button>
+                <Button type="submit" className="flex-1">{editingCustomer ? t('update') : t('customers_btn_new')}</Button>
               </div>
             </form>
           </motion.div>

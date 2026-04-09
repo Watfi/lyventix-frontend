@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 import businessService from '../services/businessService';
+import { useLanguage } from '../i18n/LanguageContext';
 import Button from '../components/Button';
 import Input from '../components/Input';
 
@@ -38,6 +39,7 @@ const THEMES = [
 
 const SettingsPage = () => {
   const { businessId, user, updateTheme, updateLogo } = useAuthStore();
+  const { t, setLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState('general');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -216,17 +218,17 @@ const SettingsPage = () => {
   };
 
   if (loading) {
-    return <div className="p-8 text-slate-400">Cargando configuración...</div>;
+    return <div className="p-8 text-slate-400">{t('settings_loading')}</div>;
   }
 
   return (
     <div className="space-y-1 sm:space-y-6 animate-fade-in relative z-10 block w-full h-full overflow-x-hidden max-w-full text-[11px] sm:text-base">
       <div className="flex items-center justify-between gap-1 sm:gap-3">
-        <h2 className="text-sm sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Configuración</h2>
+        <h2 className="text-sm sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">{t('nav_settings')}</h2>
         {success && (
           <div className="flex items-center gap-1 text-emerald-400 bg-emerald-500/10 px-2 py-1 sm:px-4 sm:py-2 rounded-lg">
             <CheckCircle2 size={12} className="shrink-0" />
-            <span className="font-medium">Guardado</span>
+            <span className="font-medium">{t('settings_saved')}</span>
           </div>
         )}
       </div>
@@ -239,21 +241,21 @@ const SettingsPage = () => {
             className={`flex items-center gap-1.5 sm:gap-3 px-2 sm:px-4 py-1.5 sm:py-3 rounded-md sm:rounded-xl text-[11px] sm:text-sm transition-all text-left whitespace-nowrap shrink-0 ${activeTab === 'general' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}`}
           >
             <Building2 size={14} className="sm:w-5 sm:h-5" />
-            <span className="font-medium">General</span>
+            <span className="font-medium">{t('settings_tab_general')}</span>
           </button>
           <button
             onClick={() => setActiveTab('appearance')}
             className={`flex items-center gap-1.5 sm:gap-3 px-2 sm:px-4 py-1.5 sm:py-3 rounded-md sm:rounded-xl text-[11px] sm:text-sm transition-all text-left whitespace-nowrap shrink-0 ${activeTab === 'appearance' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}`}
           >
             <Palette size={14} className="sm:w-5 sm:h-5" />
-            <span className="font-medium">Apariencia</span>
+            <span className="font-medium">{t('settings_tab_appearance')}</span>
           </button>
           <button
             onClick={() => setActiveTab('taxes')}
             className={`flex items-center gap-1.5 sm:gap-3 px-2 sm:px-4 py-1.5 sm:py-3 rounded-md sm:rounded-xl text-[11px] sm:text-sm transition-all text-left whitespace-nowrap shrink-0 ${activeTab === 'taxes' ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-white/40 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}`}
           >
             <DollarSign size={14} className="sm:w-5 sm:h-5" />
-            <span className="font-medium">Impuestos</span>
+            <span className="font-medium">{t('settings_tab_taxes')}</span>
           </button>
         </div>
 
@@ -268,7 +270,7 @@ const SettingsPage = () => {
           {activeTab === 'general' && (
             <form onSubmit={handleSaveGeneral} className="space-y-2.5 sm:space-y-6">
               <h3 className="text-sm sm:text-xl font-bold text-slate-800 dark:text-white mb-2 sm:mb-6 flex items-center gap-1.5">
-                <Building size={16} className="text-primary-600 dark:text-primary-400 sm:w-5 sm:h-5" /> Datos de la Empresa
+                <Building size={16} className="text-primary-600 dark:text-primary-400 sm:w-5 sm:h-5" /> {t('settings_general_header')}
               </h3>
 
               {/* Logo upload */}
@@ -285,7 +287,7 @@ const SettingsPage = () => {
                   )}
                 </div>
                 <div className="flex flex-col gap-1 sm:gap-2 items-start text-left min-w-0">
-                  <p className="text-[11px] sm:text-sm font-medium text-slate-700 dark:text-slate-300">Logo</p>
+                  <p className="text-[11px] sm:text-sm font-medium text-slate-700 dark:text-slate-300">{t('settings_logo_label')}</p>
                   <input
                     ref={logoInputRef}
                     type="file"
@@ -301,7 +303,7 @@ const SettingsPage = () => {
                       className="flex items-center gap-1 px-2 py-1 sm:px-4 sm:py-2 rounded-md sm:rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-[11px] sm:text-sm font-medium transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       <Upload size={12} className="sm:w-4 sm:h-4" />
-                      {uploadingLogo ? 'Subiendo...' : 'Subir'}
+                      {uploadingLogo ? t('settings_logo_uploading') : t('settings_logo_upload')}
                     </button>
                     {businessData.logoUrl && (
                       <button
@@ -317,7 +319,7 @@ const SettingsPage = () => {
                         }}
                         className="flex items-center gap-1 px-2 py-1 sm:px-4 sm:py-2 rounded-md sm:rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 text-[11px] sm:text-sm font-medium transition-colors"
                       >
-                        Eliminar
+                        {t('settings_logo_remove')}
                       </button>
                     )}
                   </div>
@@ -325,16 +327,16 @@ const SettingsPage = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-6">
-                <Input label="Nombre de la Empresa" required value={businessData.name} onChange={e => handleBusinessChange('name', e.target.value)} />
-                <Input label="NIT / RUT" value={businessData.taxId} onChange={e => handleBusinessChange('taxId', e.target.value)} />
-                <Input label="Teléfono" type="tel" icon={Phone} value={businessData.phone} onChange={e => handleBusinessChange('phone', e.target.value)} />
-                <Input label="Correo" type="email" value={businessData.email} onChange={e => handleBusinessChange('email', e.target.value)} />
-                <Input label="Dirección" icon={MapPin} className="md:col-span-2" value={businessData.address} onChange={e => handleBusinessChange('address', e.target.value)} />
-                <Input label="Ciudad" value={businessData.city} onChange={e => handleBusinessChange('city', e.target.value)} />
+                <Input label={t('settings_form_company_name')} required value={businessData.name} onChange={e => handleBusinessChange('name', e.target.value)} />
+                <Input label={t('settings_form_taxid')} value={businessData.taxId} onChange={e => handleBusinessChange('taxId', e.target.value)} />
+                <Input label={t('phone')} type="tel" icon={Phone} value={businessData.phone} onChange={e => handleBusinessChange('phone', e.target.value)} />
+                <Input label={t('email')} type="email" value={businessData.email} onChange={e => handleBusinessChange('email', e.target.value)} />
+                <Input label={t('address')} icon={MapPin} className="md:col-span-2" value={businessData.address} onChange={e => handleBusinessChange('address', e.target.value)} />
+                <Input label={t('city')} value={businessData.city} onChange={e => handleBusinessChange('city', e.target.value)} />
               </div>
 
               <div className="pt-3 sm:pt-6 border-t border-white/10 flex justify-end">
-                <Button type="submit" loading={saving} icon={Save}>Guardar</Button>
+                <Button type="submit" loading={saving} icon={Save}>{t('save')}</Button>
               </div>
             </form>
           )}
@@ -342,7 +344,7 @@ const SettingsPage = () => {
           {activeTab === 'appearance' && (
             <form onSubmit={handleSaveConfig} className="space-y-2.5 sm:space-y-6">
               <h3 className="text-sm sm:text-xl font-bold text-slate-800 dark:text-white mb-2 sm:mb-6 flex items-center gap-1.5">
-                <MonitorSmartphone size={16} className="text-primary-600 dark:text-primary-400 sm:w-5 sm:h-5" /> Apariencia
+                <MonitorSmartphone size={16} className="text-primary-600 dark:text-primary-400 sm:w-5 sm:h-5" /> {t('settings_appearance_header')}
               </h3>
 
               <div>
@@ -386,7 +388,7 @@ const SettingsPage = () => {
                 <select
                   className="w-full md:w-1/2 bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-white/10 rounded-md sm:rounded-xl px-2.5 py-1.5 sm:px-4 sm:py-3 text-xs sm:text-base text-slate-800 dark:text-white outline-none focus:border-primary-500 transition-colors [&>option]:bg-white dark:[&>option]:bg-[#1e293b]"
                   value={configData.language}
-                  onChange={e => handleConfigChange('language', e.target.value)}
+                  onChange={e => { handleConfigChange('language', e.target.value); setLanguage(e.target.value); }}
                 >
                   <option value="es">Español</option>
                   <option value="en">English</option>
@@ -458,7 +460,7 @@ const SettingsPage = () => {
               </div>
 
               <div className="pt-3 sm:pt-6 border-t border-white/10 flex justify-end">
-                <Button type="submit" loading={saving} icon={Save}>Guardar</Button>
+                <Button type="submit" loading={saving} icon={Save}>{t('save')}</Button>
               </div>
             </form>
           )}
