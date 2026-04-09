@@ -64,11 +64,36 @@ const ReportsPage = () => {
   const [error, setError] = useState(null);
   const [exporting, setExporting] = useState({});
   const [activeTab, setActiveTab] = useState('ventas');
+  const [cashSessions, setCashSessions] = useState([]);
+  const [cashLoading, setCashLoading] = useState(false);
 
   const today = new Date().toISOString().slice(0, 10);
   const oneYearAgo = new Date(Date.now() - 365 * 86400000).toISOString().slice(0, 10);
   const [dateFrom, setDateFrom] = useState(oneYearAgo);
   const [dateTo, setDateTo] = useState(today);
+
+  useEffect(() => {
+    if (activeTab !== 'caja' || !businessId) return;
+    const fetchCashSessions = async () => {
+      try {
+        setCashLoading(true);
+        let bid = user?.branchId;
+        if (!bid) {
+          const br = await branchService.getBranches(businessId);
+          const branches = br.data?.content || br.data || [];
+          if (branches.length > 0) bid = branches[0].id;
+        }
+        if (!bid) return;
+        const res = await cashService.getSessionHistory(bid);
+        setCashSessions(res.data || []);
+      } catch {
+        setCashSessions([]);
+      } finally {
+        setCashLoading(false);
+      }
+    };
+    fetchCashSessions();
+  }, [activeTab, businessId, user?.branchId]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -534,14 +559,143 @@ const ReportsPage = () => {
 
       {/* === CAJA TAB === */}
       {activeTab === 'caja' && (
-        <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="font-bold text-slate-800 dark:text-white text-lg">Reporte de Sesiones de Caja</h3>
-            <button onClick={handleExportCash} className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary-500/10 text-primary-500 text-sm font-medium hover:bg-primary-500/20">
-              {exporting.cash ? <CheckCircle2 size={14} /> : <Download size={14} />} Exportar PDF
-            </button>
+        <div className="space-y-4 sm:space-y-6">
+          {/* Summary cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+            {[
+              { label: 'Total Sesiones', value: String(cashSessions.length), color: 'text-primary-400', bg: 'bg-primary-500/10' },
+              { label: 'Cerradas', value: String(cashSessions.filter(s => s.status === 'CLOSED').length), color: 'text-slate-400', bg: 'bg-slate-500/10' },
+              { label: 'Abiertas', value: String(cashSessions.filter(s => s.status === 'OPEN').length), color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+              {
+                label: 'Ganancias Totales',
+                value: fmt(cashSessions.filter(s => s.status === 'CLOSED').reduce((sum, s) => sum + (Number(s.expectedBalance || 0) - Number(s.openingBalance || 0)), 0)),
+                color: 'text-emerald-400',
+                bg: 'bg-emerald-500/10',
+              },
+            ].map((card, i) => (
+              <div key={i} className="glass-panel p-3 sm:p-4 rounded-xl sm:rounded-2xl">
+                <p className={`text-[10px] sm:text-xs font-medium mb-1 ${card.color}`}>{card.label}</p>
+                <p className="text-sm sm:text-xl font-bold text-slate-800 dark:text-white">{card.value}</p>
+              </div>
+            ))}
           </div>
-          <p className="text-slate-500 text-sm">Historial de aperturas y cierres de caja con saldos, ganancias y diferencias.</p>
+
+          {/* Table panel */}
+          <div className="glass-panel rounded-2xl sm:rounded-3xl overflow-hidden">
+            <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
+              <h3 className="font-bold text-slate-800 dark:text-white text-sm sm:text-base">Historial de Sesiones de Caja</h3>
+              <button
+                onClick={handleExportCash}
+                className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-primary-500/10 text-primary-500 text-xs sm:text-sm font-medium hover:bg-primary-500/20"
+              >
+                {exporting.cash ? <CheckCircle2 size={13} /> : <Download size={13} />}
+                <span>Exportar PDF</span>
+              </button>
+            </div>
+
+            {cashLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="animate-spin text-primary-400" size={32} />
+              </div>
+            ) : cashSessions.length === 0 ? (
+              <div className="text-center py-16">
+                <Wallet className="mx-auto text-slate-300 dark:text-slate-600 mb-3" size={40} />
+                <p className="text-slate-500 dark:text-slate-400 text-sm">No hay sesiones de caja registradas</p>
+              </div>
+            ) : (
+              <>
+                {/* Mobile cards */}
+                <div className="sm:hidden divide-y divide-slate-100 dark:divide-white/5">
+                  {cashSessions.map((s, i) => {
+                    const openD = parseDate(s.openingDate);
+                    const closeD = parseDate(s.closingDate);
+                    const diff = Number(s.difference ?? (Number(s.actualBalance || 0) - Number(s.expectedBalance || 0)));
+                    const earnings = Number(s.expectedBalance || 0) - Number(s.openingBalance || 0);
+                    const isOpen = s.status === 'OPEN';
+                    return (
+                      <div key={s.id || i} className="p-3 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] text-slate-500">
+                            {openD ? openD.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
+                          </span>
+                          {isOpen ? (
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600">Abierta</span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-100 dark:bg-slate-700/50 text-slate-500">Cerrada</span>
+                          )}
+                        </div>
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[10px]">
+                          <div><span className="text-slate-400">Inicial:</span> <span className="font-medium text-slate-700 dark:text-slate-300">{fmt(s.openingBalance)}</span></div>
+                          <div><span className="text-slate-400">Esperado:</span> <span className="font-medium text-slate-700 dark:text-slate-300">{fmt(s.expectedBalance)}</span></div>
+                          <div><span className="text-slate-400">Real:</span> <span className="font-medium text-slate-700 dark:text-slate-300">{fmt(s.actualBalance)}</span></div>
+                          <div>
+                            <span className="text-slate-400">Dif:</span>{' '}
+                            <span className={`font-bold ${diff < 0 ? 'text-red-500' : diff > 0 ? 'text-emerald-500' : 'text-slate-500'}`}>{fmt(diff)}</span>
+                          </div>
+                        </div>
+                        {!isOpen && (
+                          <div className="text-[10px]"><span className="text-slate-400">Ganancias:</span> <span className="font-bold text-emerald-600 dark:text-emerald-400">{fmt(earnings)}</span></div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Desktop table */}
+                <div className="hidden sm:block overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-slate-200 dark:border-white/5">
+                        <th className="text-left p-3 text-slate-500 font-medium text-xs">Apertura</th>
+                        <th className="text-left p-3 text-slate-500 font-medium text-xs">Cierre</th>
+                        <th className="text-right p-3 text-slate-500 font-medium text-xs">Saldo Inicial</th>
+                        <th className="text-right p-3 text-slate-500 font-medium text-xs">Esperado</th>
+                        <th className="text-right p-3 text-slate-500 font-medium text-xs">Real</th>
+                        <th className="text-right p-3 text-slate-500 font-medium text-xs">Diferencia</th>
+                        <th className="text-right p-3 text-slate-500 font-medium text-xs">Ganancias</th>
+                        <th className="text-center p-3 text-slate-500 font-medium text-xs">Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {cashSessions.map((s, i) => {
+                        const openD = parseDate(s.openingDate);
+                        const closeD = parseDate(s.closingDate);
+                        const diff = Number(s.difference ?? (Number(s.actualBalance || 0) - Number(s.expectedBalance || 0)));
+                        const earnings = Number(s.expectedBalance || 0) - Number(s.openingBalance || 0);
+                        const isOpen = s.status === 'OPEN';
+                        return (
+                          <tr key={s.id || i} className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/[0.02]">
+                            <td className="p-3 text-xs text-slate-600 dark:text-slate-400">
+                              {openD ? openD.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'}
+                            </td>
+                            <td className="p-3 text-xs text-slate-600 dark:text-slate-400">
+                              {closeD ? closeD.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'}
+                            </td>
+                            <td className="p-3 text-xs text-right text-slate-700 dark:text-slate-300">{fmt(s.openingBalance)}</td>
+                            <td className="p-3 text-xs text-right text-slate-700 dark:text-slate-300">{fmt(s.expectedBalance)}</td>
+                            <td className="p-3 text-xs text-right text-slate-700 dark:text-slate-300">{fmt(s.actualBalance)}</td>
+                            <td className={`p-3 text-xs text-right font-bold ${diff < 0 ? 'text-red-500' : diff > 0 ? 'text-emerald-500' : 'text-slate-400'}`}>
+                              {fmt(diff)}
+                            </td>
+                            <td className="p-3 text-xs text-right font-bold text-emerald-600 dark:text-emerald-400">
+                              {isOpen ? '-' : fmt(earnings)}
+                            </td>
+                            <td className="p-3 text-center">
+                              {isOpen ? (
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600">Abierta</span>
+                              ) : (
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-700/50 text-slate-500">Cerrada</span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       )}
     </div>

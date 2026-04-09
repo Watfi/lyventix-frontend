@@ -17,6 +17,7 @@ import RestaurantTPVPage from './pages/RestaurantTPVPage';
 import MainLayout from './layouts/MainLayout';
 import useAuthStore from './store/authStore';
 import BranchSelectorModal from './components/BranchSelectorModal';
+import { LanguageProvider } from './i18n/LanguageContext';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -65,4 +66,10 @@ function App() {
   );
 }
 
-export default App;
+const AppWithProviders = () => (
+  <LanguageProvider>
+    <App />
+  </LanguageProvider>
+);
+
+export default AppWithProviders;

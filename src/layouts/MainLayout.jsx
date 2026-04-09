@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 import lyventixIcon from '../assets/iconlyventix.png';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1').replace('/api/v1', '');
 const getLogoUrl = (logoUrl) => {
@@ -56,6 +57,7 @@ const MainLayout = ({ children }) => {
   const customLogoUrl = user?.logoUrl ? getLogoUrl(user.logoUrl) : null;
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { lang, setLanguage, t } = useLanguage();
 
   const handleLogout = () => {
     logout();
@@ -101,30 +103,30 @@ const MainLayout = ({ children }) => {
         </div>
 
         <nav className="flex-1 space-y-1">
-          <SectionLabel label="Principal" />
-          <NavItem to="/dashboard" icon={LayoutDashboard} label="Dashboard" onClick={closeSidebar} />
+          <SectionLabel label={t('nav_principal')} />
+          <NavItem to="/dashboard" icon={LayoutDashboard} label={t('nav_dashboard')} onClick={closeSidebar} />
           {['RESTAURANT', 'BAR', 'BAKERY', 'COFFEE'].includes(user?.businessType) ? (
-            <NavItem to="/tpv" icon={UtensilsCrossed} label="TPV Restaurante" onClick={closeSidebar} />
+            <NavItem to="/tpv" icon={UtensilsCrossed} label={t('nav_tpv')} onClick={closeSidebar} />
           ) : (
-            <NavItem to="/pos" icon={ShoppingCart} label="Ventas (POS)" onClick={closeSidebar} />
+            <NavItem to="/pos" icon={ShoppingCart} label={t('nav_pos')} onClick={closeSidebar} />
           )}
 
-          <SectionLabel label="Catálogo" />
-          <NavItem to="/products" icon={Package} label="Productos" onClick={closeSidebar} />
-          <NavItem to="/categories" icon={Tag} label="Categorías" onClick={closeSidebar} />
-          <NavItem to="/inventory" icon={Warehouse} label="Inventario" onClick={closeSidebar} />
+          <SectionLabel label={t('nav_catalogo')} />
+          <NavItem to="/products" icon={Package} label={t('nav_products')} onClick={closeSidebar} />
+          <NavItem to="/categories" icon={Tag} label={t('nav_categories')} onClick={closeSidebar} />
+          <NavItem to="/inventory" icon={Warehouse} label={t('nav_inventory')} onClick={closeSidebar} />
 
-          <SectionLabel label="Negocio" />
-          <NavItem to="/customers" icon={Users} label="Clientes" onClick={closeSidebar} />
-          <NavItem to="/suppliers" icon={Truck} label="Proveedores" onClick={closeSidebar} />
-          <NavItem to="/branches" icon={Building2} label="Sucursales" onClick={closeSidebar} />
+          <SectionLabel label={t('nav_negocio')} />
+          <NavItem to="/customers" icon={Users} label={t('nav_customers')} onClick={closeSidebar} />
+          <NavItem to="/suppliers" icon={Truck} label={t('nav_suppliers')} onClick={closeSidebar} />
+          <NavItem to="/branches" icon={Building2} label={t('nav_branches')} onClick={closeSidebar} />
 
-          <SectionLabel label="Finanzas" />
-          <NavItem to="/cash" icon={Wallet} label="Caja" onClick={closeSidebar} />
-          <NavItem to="/reports" icon={BarChart3} label="Reportes" onClick={closeSidebar} />
+          <SectionLabel label={t('nav_finanzas')} />
+          <NavItem to="/cash" icon={Wallet} label={t('nav_cash')} onClick={closeSidebar} />
+          <NavItem to="/reports" icon={BarChart3} label={t('nav_reports')} onClick={closeSidebar} />
 
-          <SectionLabel label="Sistema" />
-          <NavItem to="/settings" icon={Settings} label="Configuración" onClick={closeSidebar} />
+          <SectionLabel label={t('nav_sistema')} />
+          <NavItem to="/settings" icon={Settings} label={t('nav_settings')} onClick={closeSidebar} />
         </nav>
 
         <div className="pt-4 border-t border-slate-200/50 dark:border-white/5 space-y-2">
@@ -133,7 +135,7 @@ const MainLayout = ({ children }) => {
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-red-500/10 hover:text-red-500 dark:hover:text-red-400 transition-all duration-200"
           >
             <LogOut size={20} />
-            <span className="font-medium text-sm">Cerrar Sesión</span>
+            <span className="font-medium text-sm">{t('nav_logout')}</span>
           </button>
         </div>
 
@@ -160,7 +162,7 @@ const MainLayout = ({ children }) => {
               <Menu size={22} />
             </button>
             <div className="min-w-0">
-              <h2 className="text-sm sm:text-lg md:text-xl font-semibold text-slate-800 dark:text-white truncate">Buen día, <span className="hidden sm:inline">{user?.username || 'Admin'}</span><span className="sm:hidden">{(user?.username || 'Admin').split(' ')[0]}</span> 👋</h2>
+              <h2 className="text-sm sm:text-lg md:text-xl font-semibold text-slate-800 dark:text-white truncate">{t('header_greeting')}, <span className="hidden sm:inline">{user?.username || 'Admin'}</span><span className="sm:hidden">{(user?.username || 'Admin').split(' ')[0]}</span> 👋</h2>
               {user?.branchName && (
                 <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
                   <Building2 size={10} className="inline mr-1" /><span className="truncate">{user.branchName}</span>
@@ -169,6 +171,14 @@ const MainLayout = ({ children }) => {
             </div>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 shrink-0">
+            <button
+              onClick={() => setLanguage(lang === 'es' ? 'en' : 'es')}
+              className="h-8 sm:h-10 px-2 sm:px-3 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/10 flex items-center gap-1 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-900/5 dark:hover:bg-white/5 transition-all shadow-sm text-xs sm:text-sm font-bold"
+              title={lang === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+            >
+              <span>{lang === 'es' ? '🇪🇸' : '🇺🇸'}</span>
+              <span className="hidden sm:inline">{lang === 'es' ? 'ES' : 'EN'}</span>
+            </button>
             <div onClick={() => navigate('/settings')} className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-900/5 dark:hover:bg-white/5 transition-all cursor-pointer shadow-sm">
               <Settings size={18} className="sm:w-5 sm:h-5" />
             </div>
