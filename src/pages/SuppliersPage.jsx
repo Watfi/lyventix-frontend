@@ -6,10 +6,13 @@ import Input from '../components/Input';
 import useAuthStore from '../store/authStore';
 import supplierService from '../services/supplierService';
 import { useLanguage } from '../i18n/LanguageContext';
+import ConfirmDialog from '../components/ConfirmDialog';
+import { useConfirm } from '../hooks/useConfirm';
 
 const SuppliersPage = () => {
   const { businessId } = useAuthStore();
   const { t } = useLanguage();
+  const { confirm, dialogProps } = useConfirm();
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,7 +41,7 @@ const SuppliersPage = () => {
   };
 
   const handleEdit = (s) => { setEditing(s); setForm({ name: s.name || '', taxId: s.taxId || '', email: s.email || '', phone: s.phone || '', address: s.address || '', contactName: s.contactName || '', paymentTerms: s.paymentTerms || '' }); setShowModal(true); };
-  const handleDelete = async (id) => { if (!confirm(t('suppliers_confirm_delete'))) return; try { await supplierService.deleteSupplier(id); fetchData(); } catch (err) { setError(err.response?.data?.message || 'Error'); } };
+  const handleDelete = async (id) => { const ok = await confirm({ title: '¿Eliminar?', message: t('suppliers_confirm_delete') }); if (!ok) return; try { await supplierService.deleteSupplier(id); fetchData(); } catch (err) { setError(err.response?.data?.message || 'Error'); } };
 
   return (
     <div className="space-y-8">
@@ -99,6 +102,7 @@ const SuppliersPage = () => {
           </motion.div>
         </div>
       )}
+      <ConfirmDialog {...dialogProps} />
     </div>
   );
 };

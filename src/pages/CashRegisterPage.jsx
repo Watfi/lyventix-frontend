@@ -311,7 +311,7 @@ const CashRegisterPage = () => {
                   {s.difference != null && (
                     <div className="mt-2 text-center">
                       <span className={`text-xs font-bold ${Number(s.difference) >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
-                        Diferencia: {Number(s.difference) > 0 ? '+' : ''}{fmt(s.difference)}
+                        {t('cash_col_difference')}: {Number(s.difference) > 0 ? '+' : ''}{fmt(s.difference)}
                       </span>
                     </div>
                   )}

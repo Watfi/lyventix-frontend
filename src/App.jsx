@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
@@ -41,7 +41,7 @@ function App() {
   }, [user]);
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       {isAuthenticated && <BranchSelectorModal />}
       <Routes>
         <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/dashboard" />} />
@@ -62,7 +62,7 @@ function App() {
 
         <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

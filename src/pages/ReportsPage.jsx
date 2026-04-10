@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 import Button from '../components/Button';
 import useAuthStore from '../store/authStore';
+import { useLanguage } from '../i18n/LanguageContext';
 import dashboardService from '../services/dashboardService';
 import saleService from '../services/saleService';
 import inventoryService from '../services/inventoryService';
@@ -57,6 +58,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 const ReportsPage = () => {
   const { businessId, user } = useAuthStore();
+  const { t } = useLanguage();
   const [dashboard, setDashboard] = useState(null);
   const [sales, setSales] = useState([]);
   const [customers, setCustomers] = useState([]);
@@ -212,29 +214,29 @@ const ReportsPage = () => {
   if (error) return <div className="glass-panel p-8 rounded-3xl text-center"><AlertCircle className="mx-auto text-red-400 mb-4" size={48} /><p className="text-red-400">{error}</p></div>;
 
   const tabs = [
-    { id: 'ventas', label: 'Ventas', icon: BarChart3 },
-    { id: 'productos', label: 'Productos', icon: Package },
-    { id: 'inventario', label: 'Inventario', icon: Package },
-    { id: 'clientes', label: 'Clientes', icon: Users },
-    { id: 'caja', label: 'Caja', icon: Wallet },
+    { id: 'ventas', label: t('reports_tab_sales'), icon: BarChart3 },
+    { id: 'productos', label: t('reports_tab_products'), icon: Package },
+    { id: 'inventario', label: t('reports_tab_inventory'), icon: Package },
+    { id: 'clientes', label: t('reports_tab_customers'), icon: Users },
+    { id: 'caja', label: t('reports_tab_cash'), icon: Wallet },
   ];
 
   return (
     <div className="space-y-3 sm:space-y-6">
       <div>
-        <h2 className="text-lg sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Reportes</h2>
-        <p className="text-slate-500 dark:text-slate-400 text-[11px] sm:text-sm">Filtra y exporta reportes de tu negocio</p>
+        <h2 className="text-lg sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">{t('reports_title')}</h2>
+        <p className="text-slate-500 dark:text-slate-400 text-[11px] sm:text-sm">{t('reports_desc')}</p>
       </div>
 
       {/* Date Range Filter */}
       <div className="glass-panel p-2 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-3 flex-wrap">
         <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
           <Filter size={12} className="text-primary-500" />
-          <span className="text-[11px] sm:text-sm font-semibold">Rango:</span>
+          <span className="text-[11px] sm:text-sm font-semibold">{t('reports_date_range')}</span>
         </div>
         <div className="flex items-center gap-1.5 w-full sm:w-auto">
           <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md px-1.5 py-0.5 sm:px-3 sm:py-1.5 text-[11px] sm:text-sm text-slate-800 dark:text-white flex-1 sm:flex-none min-w-0" />
-          <span className="text-slate-400 text-[10px]">a</span>
+          <span className="text-slate-400 text-[10px]">{t('reports_date_to')}</span>
           <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md px-1.5 py-0.5 sm:px-3 sm:py-1.5 text-[11px] sm:text-sm text-slate-800 dark:text-white flex-1 sm:flex-none min-w-0" />
         </div>
         <div className="flex items-center gap-1.5 sm:ml-auto text-[11px] sm:text-sm text-slate-500">
@@ -247,10 +249,10 @@ const ReportsPage = () => {
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 sm:gap-4">
         {[
-          { label: 'Ventas', value: fmt(totalFiltered), sub: `${filteredSales.length}`, icon: BarChart3, color: 'text-primary-400', bg: 'bg-primary-500/10' },
-          { label: 'Ticket Prom.', value: fmt(avgTicket), sub: 'por venta', icon: TrendingUp, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-          { label: 'Productos', value: String(dashboard?.productsCount || 0), sub: 'catalogo', icon: Package, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-          { label: 'Stock Bajo', value: String(dashboard?.lowStockProductsCount || 0), sub: 'alertas', icon: AlertCircle, color: 'text-orange-400', bg: 'bg-orange-500/10' },
+          { label: t('reports_card_sales'), value: fmt(totalFiltered), sub: `${filteredSales.length}`, icon: BarChart3, color: 'text-primary-400', bg: 'bg-primary-500/10' },
+          { label: t('reports_card_avg_ticket'), value: fmt(avgTicket), sub: 'por venta', icon: TrendingUp, color: 'text-purple-400', bg: 'bg-purple-500/10' },
+          { label: t('reports_card_products'), value: String(dashboard?.productsCount || 0), sub: 'catalogo', icon: Package, color: 'text-blue-400', bg: 'bg-blue-500/10' },
+          { label: t('reports_card_low_stock'), value: String(dashboard?.lowStockProductsCount || 0), sub: 'alertas', icon: AlertCircle, color: 'text-orange-400', bg: 'bg-orange-500/10' },
         ].map((card, i) => (
           <div key={i} className="glass-panel p-2 sm:p-4 rounded-lg sm:rounded-2xl">
             <div className="flex items-center gap-1 mb-0.5 sm:mb-2">
@@ -563,11 +565,11 @@ const ReportsPage = () => {
           {/* Summary cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
             {[
-              { label: 'Total Sesiones', value: String(cashSessions.length), color: 'text-primary-400', bg: 'bg-primary-500/10' },
-              { label: 'Cerradas', value: String(cashSessions.filter(s => s.status === 'CLOSED').length), color: 'text-slate-400', bg: 'bg-slate-500/10' },
-              { label: 'Abiertas', value: String(cashSessions.filter(s => s.status === 'OPEN').length), color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+              { label: t('reports_cash_total'), value: String(cashSessions.length), color: 'text-primary-400', bg: 'bg-primary-500/10' },
+              { label: t('reports_cash_closed'), value: String(cashSessions.filter(s => s.status === 'CLOSED').length), color: 'text-slate-400', bg: 'bg-slate-500/10' },
+              { label: t('reports_cash_open'), value: String(cashSessions.filter(s => s.status === 'OPEN').length), color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
               {
-                label: 'Ganancias Totales',
+                label: t('reports_cash_earnings'),
                 value: fmt(cashSessions.filter(s => s.status === 'CLOSED').reduce((sum, s) => sum + (Number(s.expectedBalance || 0) - Number(s.openingBalance || 0)), 0)),
                 color: 'text-emerald-400',
                 bg: 'bg-emerald-500/10',
@@ -583,7 +585,7 @@ const ReportsPage = () => {
           {/* Table panel */}
           <div className="glass-panel rounded-2xl sm:rounded-3xl overflow-hidden">
             <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
-              <h3 className="font-bold text-slate-800 dark:text-white text-sm sm:text-base">Historial de Sesiones de Caja</h3>
+              <h3 className="font-bold text-slate-800 dark:text-white text-sm sm:text-base">{t('reports_cash_sessions')}</h3>
               <button
                 onClick={handleExportCash}
                 className="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl bg-primary-500/10 text-primary-500 text-xs sm:text-sm font-medium hover:bg-primary-500/20"
@@ -619,9 +621,9 @@ const ReportsPage = () => {
                             {openD ? openD.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
                           </span>
                           {isOpen ? (
-                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600">Abierta</span>
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600">{t('cash_session_open')}</span>
                           ) : (
-                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-100 dark:bg-slate-700/50 text-slate-500">Cerrada</span>
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-100 dark:bg-slate-700/50 text-slate-500">{t('cash_session_closed')}</span>
                           )}
                         </div>
                         <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[10px]">

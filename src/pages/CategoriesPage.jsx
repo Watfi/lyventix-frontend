@@ -6,10 +6,13 @@ import Input from '../components/Input';
 import useAuthStore from '../store/authStore';
 import categoryService from '../services/categoryService';
 import { useLanguage } from '../i18n/LanguageContext';
+import ConfirmDialog from '../components/ConfirmDialog';
+import { useConfirm } from '../hooks/useConfirm';
 
 const CategoriesPage = () => {
   const { businessId } = useAuthStore();
   const { t } = useLanguage();
+  const { confirm, dialogProps } = useConfirm();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -37,7 +40,7 @@ const CategoriesPage = () => {
   };
 
   const handleEdit = (c) => { setEditing(c); setForm({ name: c.name || '', description: c.description || '', code: c.code || '', color: c.color || '#3b82f6', icon: c.icon || '', displayOrder: c.displayOrder || '' }); setShowModal(true); };
-  const handleDelete = async (id) => { if (!confirm(t('categories_confirm_delete'))) return; try { await categoryService.deleteCategory(id); fetchData(); } catch (err) { setError(err.response?.data?.message || 'Error'); } };
+  const handleDelete = async (id) => { const ok = await confirm({ title: '¿Eliminar?', message: t('categories_confirm_delete') }); if (!ok) return; try { await categoryService.deleteCategory(id); fetchData(); } catch (err) { setError(err.response?.data?.message || 'Error'); } };
 
   return (
     <div className="space-y-8">
@@ -86,6 +89,7 @@ const CategoriesPage = () => {
           </motion.div>
         </div>
       )}
+      <ConfirmDialog {...dialogProps} />
     </div>
   );
 };

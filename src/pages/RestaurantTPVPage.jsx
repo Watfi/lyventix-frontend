@@ -7,9 +7,12 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '../store/authStore';
 import usePOSStore from '../store/posStore';
+import { useLanguage } from '../i18n/LanguageContext';
 import tableService from '../services/tableService';
 import Button from '../components/Button';
 import Input from '../components/Input';
+import ConfirmDialog from '../components/ConfirmDialog';
+import { useConfirm } from '../hooks/useConfirm';
 
 const TABLE_STATUS_COLORS = {
   AVAILABLE: 'border-emerald-500/50 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400',
@@ -45,6 +48,8 @@ const printComanda = (tableName, cart, businessName) => {
 
 const RestaurantTPVPage = () => {
   const { businessId, user } = useAuthStore();
+  const { t } = useLanguage();
+  const { confirm, dialogProps } = useConfirm();
   const {
     cart, products, tables, selectedTable, branchId, loading, error, tableOrders,
     initPOS, selectTable, searchProducts, addToCart, removeFromCart,
@@ -98,7 +103,8 @@ const RestaurantTPVPage = () => {
   };
 
   const handleDeleteTable = async (tableId) => {
-    if (!confirm('¿Eliminar esta mesa?')) return;
+    const ok = await confirm({ title: '¿Eliminar?', message: '¿Eliminar esta mesa?' });
+    if (!ok) return;
     try {
       await tableService.deleteTable(tableId);
       if (selectedTable?.id === tableId) { selectTable(null); clearCart(); }
@@ -128,8 +134,9 @@ const RestaurantTPVPage = () => {
     setShowAddDelivery(false);
   };
 
-  const handleDeleteDelivery = (deliveryId) => {
-    if (!confirm('¿Eliminar este domicilio?')) return;
+  const handleDeleteDelivery = async (deliveryId) => {
+    const ok = await confirm({ title: '¿Eliminar?', message: '¿Eliminar este domicilio?' });
+    if (!ok) return;
     if (selectedTable?.id === deliveryId) { selectTable(null); clearCart(); }
     clearTableOrder(deliveryId);
     setDeliveryOrders(prev => prev.filter(d => d.id !== deliveryId));
@@ -279,8 +286,8 @@ const RestaurantTPVPage = () => {
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-white/5 text-slate-800 dark:text-slate-100 focus:border-primary-500/50 focus:outline-none transition-colors" />
                 </div>
                 <div className="flex gap-2">
-                  <Button onClick={handleAddTable} icon={Check}>Crear</Button>
-                  <Button variant="ghost" onClick={() => setShowAddTable(false)}>Cancelar</Button>
+                  <Button onClick={handleAddTable} icon={Check}>{t('create')}</Button>
+                  <Button variant="ghost" onClick={() => setShowAddTable(false)}>{t('cancel')}</Button>
                 </div>
               </div>
             )}
@@ -338,8 +345,8 @@ const RestaurantTPVPage = () => {
                 <Input label="Nombre del domicilio" placeholder={`Ej: Domicilio #${deliveryCounter}`}
                   value={newDeliveryName} onChange={(e) => setNewDeliveryName(e.target.value)} />
                 <div className="flex gap-2">
-                  <Button onClick={handleAddDelivery} icon={Check}>Crear</Button>
-                  <Button variant="ghost" onClick={() => setShowAddDelivery(false)}>Cancelar</Button>
+                  <Button onClick={handleAddDelivery} icon={Check}>{t('create')}</Button>
+                  <Button variant="ghost" onClick={() => setShowAddDelivery(false)}>{t('cancel')}</Button>
                 </div>
               </div>
             )}
@@ -429,7 +436,7 @@ const RestaurantTPVPage = () => {
             <div className="px-3 py-2 sm:px-5 sm:py-3 border-b border-slate-200/50 dark:border-white/5">
               <div className="relative">
                 <Search size={14} className="sm:w-4 sm:h-4 absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input type="text" placeholder="Buscar producto..." value={searchQuery} onChange={handleSearch}
+                <input type="text" placeholder={t('pos_search_products')} value={searchQuery} onChange={handleSearch}
                   className="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/10 bg-white/70 dark:bg-white/5 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:border-primary-500/50 focus:outline-none transition-colors text-xs sm:text-sm" />
               </div>
               {searchQuery.length >= 2 && products.length > 0 && (
@@ -491,9 +498,9 @@ const RestaurantTPVPage = () => {
             {/* Footer */}
             <div className="border-t border-slate-200/50 dark:border-white/5 px-3 py-2.5 sm:px-5 sm:py-4 space-y-2 sm:space-y-3 bg-slate-50/50 dark:bg-white/[0.02]">
               <div className="space-y-0.5 sm:space-y-1">
-                <div className="flex justify-between text-[11px] sm:text-sm text-slate-500"><span>Subtotal</span><span>${subtotal.toLocaleString()}</span></div>
-                <div className="flex justify-between text-[11px] sm:text-sm text-slate-500"><span>IVA</span><span>${tax.toLocaleString()}</span></div>
-                <div className="flex justify-between text-sm sm:text-lg font-bold text-slate-800 dark:text-white pt-1 border-t border-slate-200 dark:border-white/10"><span>Total</span><span>${total.toLocaleString()}</span></div>
+                <div className="flex justify-between text-[11px] sm:text-sm text-slate-500"><span>{t('pos_subtotal')}</span><span>${subtotal.toLocaleString()}</span></div>
+                <div className="flex justify-between text-[11px] sm:text-sm text-slate-500"><span>{t('pos_iva_label')}</span><span>${tax.toLocaleString()}</span></div>
+                <div className="flex justify-between text-sm sm:text-lg font-bold text-slate-800 dark:text-white pt-1 border-t border-slate-200 dark:border-white/10"><span>{t('pos_total')}</span><span>${total.toLocaleString()}</span></div>
               </div>
               {processingMessage && (
                 <div className="text-center py-1.5 px-3 sm:py-2 sm:px-4 rounded-lg sm:rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs sm:text-sm font-medium">{processingMessage}</div>
@@ -501,11 +508,11 @@ const RestaurantTPVPage = () => {
               <div className="flex gap-1.5 sm:gap-2">
                 <button onClick={handleComanda} disabled={cart.length === 0 || loading}
                   className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg sm:rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs sm:text-base font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
-                  <Printer size={15} className="sm:w-[18px] sm:h-[18px]" /> Comanda
+                  <Printer size={15} className="sm:w-[18px] sm:h-[18px]" /> {t('pos_order_btn')}
                 </button>
                 <button onClick={handleCobrar} disabled={cart.length === 0 || loading}
                   className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 sm:px-4 sm:py-3 rounded-lg sm:rounded-xl bg-primary-600 hover:bg-primary-500 text-white text-xs sm:text-base font-medium shadow-lg shadow-primary-600/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
-                  <CreditCard size={15} className="sm:w-[18px] sm:h-[18px]" /> Cobrar
+                  <CreditCard size={15} className="sm:w-[18px] sm:h-[18px]" /> {t('pos_charge_btn')}
                 </button>
               </div>
             </div>
@@ -538,7 +545,7 @@ const RestaurantTPVPage = () => {
                 {hasPendingSale ? 'Se cancelará la venta pendiente y se liberará la mesa.' : 'Se eliminarán todos los productos de la orden actual.'}
               </p>
               <div className="flex gap-3">
-                <Button variant="outline" className="flex-1" onClick={() => setShowCancelConfirm(false)}>No, volver</Button>
+                <Button variant="outline" className="flex-1" onClick={() => setShowCancelConfirm(false)}>{t('cancel')}</Button>
                 <button onClick={handleCancelSale}
                   className="flex-1 px-4 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-colors">Sí, cancelar</button>
               </div>
@@ -558,7 +565,7 @@ const RestaurantTPVPage = () => {
                 className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-900/30 mx-auto mb-5 flex items-center justify-center">
                 <CheckCircle2 size={40} className="text-emerald-500" />
               </motion.div>
-              <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-1">Venta Completada</h2>
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-1">{t('pos_sale_completed')}</h2>
               {saleConfirmation._table && <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">{saleConfirmation._table}</p>}
               {saleConfirmation._deliveryInfo && (
                 <div className="text-xs text-slate-500 dark:text-slate-400 mb-2 space-y-0.5">
@@ -579,13 +586,13 @@ const RestaurantTPVPage = () => {
                 ))}
                 {saleConfirmation._totals && (
                   <div className="border-t border-slate-200 dark:border-white/10 pt-2 mt-2">
-                    <div className="flex justify-between text-sm text-slate-500"><span>Subtotal</span><span>${saleConfirmation._totals.subtotal.toLocaleString()}</span></div>
-                    <div className="flex justify-between text-sm text-slate-500"><span>IVA</span><span>${saleConfirmation._totals.tax.toLocaleString()}</span></div>
-                    <div className="flex justify-between text-lg font-bold text-slate-800 dark:text-white mt-1"><span>Total</span><span>${saleConfirmation._totals.total.toLocaleString()}</span></div>
+                    <div className="flex justify-between text-sm text-slate-500"><span>{t('pos_subtotal')}</span><span>${saleConfirmation._totals.subtotal.toLocaleString()}</span></div>
+                    <div className="flex justify-between text-sm text-slate-500"><span>{t('pos_iva_label')}</span><span>${saleConfirmation._totals.tax.toLocaleString()}</span></div>
+                    <div className="flex justify-between text-lg font-bold text-slate-800 dark:text-white mt-1"><span>{t('pos_total')}</span><span>${saleConfirmation._totals.total.toLocaleString()}</span></div>
                   </div>
                 )}
               </div>
-              <Button className="w-full" onClick={() => setSaleConfirmation(null)}>Aceptar</Button>
+              <Button className="w-full" onClick={() => setSaleConfirmation(null)}>{t('close')}</Button>
             </motion.div>
           </motion.div>
         )}
@@ -612,11 +619,11 @@ const RestaurantTPVPage = () => {
                   value={deliveryInfo.customerName} onChange={(e) => setDeliveryInfo(prev => ({ ...prev, customerName: e.target.value }))} />
                 <Input label="Dirección de entrega" placeholder="Ej: Calle 10 #25-30, Apto 201" icon={MapPin}
                   value={deliveryInfo.address} onChange={(e) => setDeliveryInfo(prev => ({ ...prev, address: e.target.value }))} />
-                <Input label="Teléfono" placeholder="Ej: 300 123 4567" icon={Phone}
+                <Input label={t('phone')} placeholder="Ej: 300 123 4567" icon={Phone}
                   value={deliveryInfo.phone} onChange={(e) => setDeliveryInfo(prev => ({ ...prev, phone: e.target.value }))} />
               </div>
               <div className="flex gap-3 mt-6">
-                <Button variant="outline" className="flex-1" onClick={() => setShowDeliveryInfo(false)}>Cancelar</Button>
+                <Button variant="outline" className="flex-1" onClick={() => setShowDeliveryInfo(false)}>{t('cancel')}</Button>
                 <Button className="flex-1" onClick={handleDeliveryConfirm}
                   disabled={!deliveryInfo.customerName.trim() || !deliveryInfo.address.trim()}>
                   <CreditCard size={16} />
@@ -631,6 +638,7 @@ const RestaurantTPVPage = () => {
       {error && (
         <div className="fixed bottom-6 right-6 px-4 py-3 rounded-xl bg-red-500 text-white shadow-lg text-sm font-medium">{error}</div>
       )}
+      <ConfirmDialog {...dialogProps} />
     </div>
   );
 };

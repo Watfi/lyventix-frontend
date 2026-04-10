@@ -6,10 +6,13 @@ import Input from '../components/Input';
 import useAuthStore from '../store/authStore';
 import branchService from '../services/branchService';
 import { useLanguage } from '../i18n/LanguageContext';
+import ConfirmDialog from '../components/ConfirmDialog';
+import { useConfirm } from '../hooks/useConfirm';
 
 const BranchesPage = () => {
   const { businessId } = useAuthStore();
   const { t } = useLanguage();
+  const { confirm, dialogProps } = useConfirm();
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,7 +39,7 @@ const BranchesPage = () => {
   };
 
   const handleEdit = (b) => { setEditing(b); setForm({ code: b.code || '', name: b.name || '', phone: b.phone || '', email: b.email || '', address: b.address || '', city: b.city || '', state: b.state || '', postalCode: b.postalCode || '', isMain: b.isMain || false }); setShowModal(true); };
-  const handleDelete = async (id) => { if (!confirm(t('branches_confirm_delete'))) return; try { await branchService.deleteBranch(businessId, id); fetch(); } catch (err) { setError(err.response?.data?.message || 'Error'); } };
+  const handleDelete = async (id) => { const ok = await confirm({ title: '¿Eliminar?', message: t('branches_confirm_delete') }); if (!ok) return; try { await branchService.deleteBranch(businessId, id); fetch(); } catch (err) { setError(err.response?.data?.message || 'Error'); } };
 
   return (
     <div className="space-y-8">
@@ -98,6 +101,7 @@ const BranchesPage = () => {
           </motion.div>
         </div>
       )}
+      <ConfirmDialog {...dialogProps} />
     </div>
   );
 };

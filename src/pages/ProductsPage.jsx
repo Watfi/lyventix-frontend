@@ -7,6 +7,8 @@ import useAuthStore from '../store/authStore';
 import productService from '../services/productService';
 import categoryService from '../services/categoryService';
 import { uploadProductImage, deleteProductImage } from '../services/supabaseStorage';
+import ConfirmDialog from '../components/ConfirmDialog';
+import { useConfirm } from '../hooks/useConfirm';
 
 const CLOTHING_SIZES = {
   Ropa: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
@@ -41,6 +43,7 @@ const ProductsPage = () => {
   const visibleFields = fieldsByBusinessType[businessType] || fieldsByBusinessType['OTHER'];
   const showField = (field) => visibleFields.includes(field);
   const showVariants = businessType === 'CLOTHING_STORE' || businessType === 'OTHER';
+  const { confirm, dialogProps } = useConfirm();
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -250,7 +253,8 @@ const ProductsPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('¿Eliminar este producto?')) return;
+    const ok = await confirm({ title: '¿Eliminar?', message: '¿Eliminar este producto?' });
+    if (!ok) return;
     try { await productService.deleteProduct(id); fetchProducts(); } catch (err) { setError(err.response?.data?.message || 'Error'); }
   };
 
@@ -583,6 +587,7 @@ const ProductsPage = () => {
           </motion.div>
         </div>
       )}
+      <ConfirmDialog {...dialogProps} />
     </div>
   );
 };

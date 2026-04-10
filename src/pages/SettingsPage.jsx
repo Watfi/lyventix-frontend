@@ -348,7 +348,7 @@ const SettingsPage = () => {
               </h3>
 
               <div>
-                <label className="text-[11px] sm:text-sm text-slate-600 dark:text-slate-300 mb-2 sm:mb-4 block">Color Principal</label>
+                <label className="text-[11px] sm:text-sm text-slate-600 dark:text-slate-300 mb-2 sm:mb-4 block">{t('settings_color_label')}</label>
                 <div className="flex flex-wrap gap-2 sm:gap-4">
                   {THEMES.map(theme => (
                     <div
@@ -364,34 +364,34 @@ const SettingsPage = () => {
               </div>
 
               <div className="pt-2.5 sm:pt-6 border-t border-white/10 dark:border-white/10 border-slate-200">
-                <label className="text-[11px] sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 sm:mb-4 block">Modo</label>
+                <label className="text-[11px] sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 sm:mb-4 block">{t('settings_mode_label')}</label>
                 <div className="flex bg-white/50 dark:bg-white/5 p-0.5 sm:p-1 rounded-lg sm:rounded-2xl w-full sm:w-max backdrop-blur-md shadow-sm border border-slate-200 dark:border-white/10">
                   <button
                     type="button"
                     onClick={() => handleConfigChange('darkMode', false)}
                     className={`flex items-center justify-center gap-1.5 flex-1 sm:flex-initial px-3 sm:px-6 py-2 sm:py-3 rounded-md sm:rounded-xl text-[11px] sm:text-sm transition-all ${!configData.darkMode ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
                   >
-                    <Sun size={14} className="sm:w-[18px] sm:h-[18px]" /> Claro
+                    <Sun size={14} className="sm:w-[18px] sm:h-[18px]" /> {t('settings_mode_light')}
                   </button>
                   <button
                     type="button"
                     onClick={() => handleConfigChange('darkMode', true)}
                     className={`flex items-center justify-center gap-1.5 flex-1 sm:flex-initial px-3 sm:px-6 py-2 sm:py-3 rounded-md sm:rounded-xl text-[11px] sm:text-sm transition-all ${configData.darkMode ? 'bg-slate-800 text-white shadow-md border border-white/10' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}`}
                   >
-                    <Moon size={14} className="sm:w-[18px] sm:h-[18px]" /> Oscuro
+                    <Moon size={14} className="sm:w-[18px] sm:h-[18px]" /> {t('settings_mode_dark')}
                   </button>
                 </div>
               </div>
 
               <div className="pt-2.5 sm:pt-6 border-t border-slate-200 dark:border-white/10">
-                <label className="text-[11px] sm:text-sm text-slate-600 dark:text-slate-300 mb-1.5 sm:mb-2 flex items-center gap-1.5"> <Globe2 size={13} className="sm:w-4 sm:h-4"/> Idioma</label>
+                <label className="text-[11px] sm:text-sm text-slate-600 dark:text-slate-300 mb-1.5 sm:mb-2 flex items-center gap-1.5"> <Globe2 size={13} className="sm:w-4 sm:h-4"/> {t('settings_language_label')}</label>
                 <select
                   className="w-full md:w-1/2 bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-white/10 rounded-md sm:rounded-xl px-2.5 py-1.5 sm:px-4 sm:py-3 text-xs sm:text-base text-slate-800 dark:text-white outline-none focus:border-primary-500 transition-colors [&>option]:bg-white dark:[&>option]:bg-[#1e293b]"
                   value={configData.language}
                   onChange={e => { handleConfigChange('language', e.target.value); setLanguage(e.target.value); }}
                 >
-                  <option value="es">Español</option>
-                  <option value="en">English</option>
+                  <option value="es">{t('settings_language_es')}</option>
+                  <option value="en">{t('settings_language_en')}</option>
                 </select>
               </div>
 
@@ -404,12 +404,12 @@ const SettingsPage = () => {
           {activeTab === 'taxes' && (
             <form onSubmit={handleSaveConfig} className="space-y-2.5 sm:space-y-6">
               <h3 className="text-sm sm:text-xl font-bold text-slate-800 dark:text-white mb-2 sm:mb-6 flex items-center gap-1.5">
-                <DollarSign size={16} className="text-primary-600 dark:text-primary-400 sm:w-5 sm:h-5" /> Regional
+                <DollarSign size={16} className="text-primary-600 dark:text-primary-400 sm:w-5 sm:h-5" /> {t('settings_taxes_header')}
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-6">
                 <div>
-                  <label className="text-[11px] sm:text-sm text-slate-600 dark:text-slate-300 mb-1 sm:mb-2 block">Moneda</label>
+                  <label className="text-[11px] sm:text-sm text-slate-600 dark:text-slate-300 mb-1 sm:mb-2 block">{t('settings_currency_label')}</label>
                   <select
                     className="w-full bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-white/10 rounded-md sm:rounded-xl px-2.5 py-1.5 sm:px-4 sm:py-3 text-xs sm:text-base text-slate-800 dark:text-white outline-none focus:border-primary-500 transition-colors [&>option]:bg-white dark:[&>option]:bg-[#1e293b]"
                     value={configData.currency}
@@ -423,7 +423,7 @@ const SettingsPage = () => {
                 </div>
 
                 <div>
-                  <label className="text-[11px] sm:text-sm text-slate-600 dark:text-slate-300 mb-1 sm:mb-2 block">Zona Horaria</label>
+                  <label className="text-[11px] sm:text-sm text-slate-600 dark:text-slate-300 mb-1 sm:mb-2 block">{t('settings_timezone_label')}</label>
                   <select
                     className="w-full bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-white/10 rounded-md sm:rounded-xl px-2.5 py-1.5 sm:px-4 sm:py-3 text-xs sm:text-base text-slate-800 dark:text-white outline-none focus:border-primary-500 transition-colors [&>option]:bg-white dark:[&>option]:bg-[#1e293b]"
                     value={configData.timezone}
@@ -447,14 +447,14 @@ const SettingsPage = () => {
                       checked={configData.taxEnabled}
                       onChange={e => handleConfigChange('taxEnabled', e.target.checked)}
                     />
-                    <label htmlFor="taxEnabled" className="text-[11px] sm:text-base text-slate-600 dark:text-slate-300 font-medium cursor-pointer">Habilitar impuestos</label>
+                    <label htmlFor="taxEnabled" className="text-[11px] sm:text-base text-slate-600 dark:text-slate-300 font-medium cursor-pointer">{t('settings_tax_enable')}</label>
                   </div>
                 </div>
 
                 {configData.taxEnabled && (
                   <>
-                    <Input label="Nombre (Ej. IVA)" value={configData.taxName} onChange={e => handleConfigChange('taxName', e.target.value)} />
-                    <Input label="Tasa (%)" type="number" step="0.1" value={configData.taxRate} onChange={e => handleConfigChange('taxRate', parseFloat(e.target.value))} />
+                    <Input label={t('settings_tax_name')} value={configData.taxName} onChange={e => handleConfigChange('taxName', e.target.value)} />
+                    <Input label={t('settings_tax_rate')} type="number" step="0.1" value={configData.taxRate} onChange={e => handleConfigChange('taxRate', parseFloat(e.target.value))} />
                   </>
                 )}
               </div>

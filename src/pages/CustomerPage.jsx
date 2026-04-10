@@ -18,10 +18,13 @@ import Input from '../components/Input';
 import useAuthStore from '../store/authStore';
 import customerService from '../services/customerService';
 import { useLanguage } from '../i18n/LanguageContext';
+import ConfirmDialog from '../components/ConfirmDialog';
+import { useConfirm } from '../hooks/useConfirm';
 
 const CustomerPage = () => {
   const { businessId } = useAuthStore();
   const { t } = useLanguage();
+  const { confirm, dialogProps } = useConfirm();
   const [searchTerm, setSearchTerm] = useState('');
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -91,7 +94,8 @@ const CustomerPage = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm(t('customers_confirm_delete'))) return;
+    const ok = await confirm({ title: '¿Eliminar?', message: t('customers_confirm_delete') });
+    if (!ok) return;
     try {
       await customerService.deleteCustomer(businessId, id);
       fetchCustomers();
@@ -228,6 +232,7 @@ const CustomerPage = () => {
           </motion.div>
         </div>
       )}
+      <ConfirmDialog {...dialogProps} />
     </div>
   );
 };
